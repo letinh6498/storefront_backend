@@ -1,0 +1,36 @@
+
+POST http://localhost:3000/users/authenticate
+Content-Type: application/json
+
+{
+    "username": "tinh98",
+    "password": "123123"
+}
+
+###
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "username": "tinh98",
+    "password": "123123"
+}
+
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "username": "tinh100",
+    "password": "123123"
+}
+###
+POST http://localhost:3000/refreshtoken
+Content-Type: application/json
+
+{
+    "refreshToken": "esyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2LCJpYXQiOjE2ODE5ODA1NjUsImV4cCI6MTY4MjU4NTM2NX0.JKj-Ta36g9tE4i8v4Te8mlAftT9Lr4c181NtKNykpQc"
+}
+###
+GET http://localhost:3000/products
+Authorization: Bearar eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE2LCJpYXQiOjE2ODE5ODA1MjQsImV4cCI6MTY4MTk4MTQyNH0.SJ6SY4SwdQTw1hkyb6kE8mARbkUohb25AQihllTVjsY

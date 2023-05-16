@@ -1,0 +1,39 @@
+@url=http://localhost:3000
+@id=1
+
+### create user
+POST   {{url}}/users/
+Content-Type: application/json
+
+{   
+    "username": "nhatnam",
+    "email":"tinhsle@gmail.com",
+    "password": 101233123,
+    "first_name": "nam",
+    "last_name": "nguyen"
+}
+
+### get all user
+GET {{url}}/users/
+
+### get user by Id
+GET {{url}}/users/{{id}}
+
+### udate user
+PUT  {{url}}/users/{{id}}
+Content-Type: application/json
+
+{
+    "username": "nhat nam",
+    "email":"nhatnam@gmail.com",
+    "password": 10,
+    "first_name": "tinh",
+    "last_name": "le"
+}
+
+### delete  user by id
+DELETE {{url}}/users/{{id}}
+
+
+
+

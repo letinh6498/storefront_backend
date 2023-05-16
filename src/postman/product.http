@@ -1,0 +1,35 @@
+@url=http://localhost:3000
+@id=7
+
+### create product
+POST   {{url}}/products/
+Content-Type: application/json
+
+{   
+    "name": "quần sì lọt khe",
+    "description":"quần sì lọt khe bán không ai mua",
+    "price": 10
+}
+
+### get all product
+GET {{url}}/products/
+
+### get product by Id
+GET {{url}}/products/{{id}}
+
+### udate product
+PUT  {{url}}/products/{{id}}
+Content-Type: application/json
+
+{
+    "name": "bàn chải",
+    "description":"bàn chải đánh răng dành cho trẻ em",
+    "price": 10000
+}
+
+### delete  product by id
+DELETE {{url}}/products/{{id}}
+
+
+
+
