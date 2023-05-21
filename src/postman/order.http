@@ -1,57 +1,68 @@
 @token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTY4NDY3ODA5NCwiZXhwIjoxNjg0Njc4OTk0fQ.gZTfgCDHMEFyGtvk3bAQpEY1uAYk8Cp84maKsqlHn4U
 @url=http://localhost:3000
 ###
-### Get All Products
+### Create Order
 ###
 
-GET {{url}}/products
-Authorization: Bearer {{token}}
-
-
-###
-### Get Product by ID
-###
-
-GET {{url}}/products/1
-Authorization: Bearer {{token}}
-
-
-###
-### Create Product
-###
-
-POST {{url}}/products
+POST {{url}}/orders
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Product 1",
-  "description": "cái gì gì đây 1",
-  "price": 10.99
+  "userId": 1
 }
 
 
 ###
-### Update Product
+### Update Order Status
 ###
 
-PUT {{url}}/products/1
+PUT {{url}}/orders/1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Updated Product 1",
-  "description": "Updated cái gì gì đây",
-  "price": 19.99
+  "status": "complete"
 }
 
 
 ###
-### Delete Product
+### Get Active Order
 ###
 
-DELETE {{url}}/products/1
+GET {{url}}/orders/1/active
 Authorization: Bearer {{token}}
+
+
+###
+### Get Completed Orders
+###
+
+GET {{url}}/orders/1/completed
+Authorization: Bearer {{token}}
+
+
+###
+### Add Product to Order
+###
+
+POST {{url}}/orders/1/products
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "product_id": 1,
+  "quantity": 2
+}
+
+
+###
+### Remove Product from Order
+###
+
+DELETE {{url}}/orders/1/products/1
+Authorization: Bearer {{token}}
+
 
 ###
 ### Get Ordered Products

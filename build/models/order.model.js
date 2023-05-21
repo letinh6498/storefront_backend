@@ -39,14 +39,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductModel = void 0;
+exports.OrderModel = void 0;
 var database_1 = __importDefault(require("../database"));
-var ProductModel = /** @class */ (function () {
-    function ProductModel() {
+var lodash_1 = __importDefault(require("lodash"));
+var OrderModel = /** @class */ (function () {
+    function OrderModel() {
     }
-    ProductModel.prototype.getAllOrder = function () {
+    /**
+     * Create a new order for a user.
+     * @param userId The ID of the user.
+     * @returns A Promise containing the created order information.
+     */
+    OrderModel.prototype.createOrder = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
-            var conn, query, result, error_1;
+            var conn, sql, result, resData, err_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -54,120 +60,373 @@ var ProductModel = /** @class */ (function () {
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        query = 'SELECT * FROM orders';
-                        return [4 /*yield*/, conn.query(query)];
+                        console.log('userID:model:::', userId);
+                        sql = "\n        INSERT INTO orders (user_id, current_status, created_at)\n        SELECT $1, 'active', NOW()\n        WHERE NOT EXISTS (\n          SELECT id FROM orders WHERE user_id = $1 AND current_status = 'active'\n        )\n        RETURNING *;\n      ";
+                        return [4 /*yield*/, conn.query(sql, [userId])];
                     case 2:
                         result = _a.sent();
                         conn.release();
-                        return [2 /*return*/, result.rows];
+                        if (result.rows.length === 0) {
+                            throw new Error('An active order already exists for this user.');
+                        }
+                        resData = lodash_1.default.pick(result.rows[0], [
+                            'id',
+                            'user_id',
+                            'current_status',
+                            'created_at',
+                        ]);
+                        return [2 /*return*/, resData];
                     case 3:
-                        error_1 = _a.sent();
-                        throw new Error("Could not get orders. Error: ".concat(error_1));
+                        err_1 = _a.sent();
+                        throw new Error("Failed to create order: ".concat(err_1));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    ProductModel.prototype.getOrderById = function (id) {
+    /**
+     * Update the status of an order for a user.
+     * @param userId The ID of the user.
+     * @returns A Promise containing the updated order information.
+     */
+    OrderModel.prototype.updateStatus = function (userId, status) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, conn, result, error_2;
+            var conn, checkActiveQuery, checkActiveQueryRes, orderId, sql, result, resData, err_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 4, , 5]);
+                        return [4 /*yield*/, database_1.default.connect()];
+                    case 1:
+                        conn = _a.sent();
+                        checkActiveQuery = 'SELECT id FROM orders WHERE user_id = $1 AND current_status = $2;';
+                        return [4 /*yield*/, conn.query(checkActiveQuery, [
+                                userId,
+                                status,
+                            ])];
+                    case 2:
+                        checkActiveQueryRes = _a.sent();
+                        if (!checkActiveQueryRes.rows[0]) {
+                            conn.release();
+                            throw new Error("There are no active orders for user ".concat(userId));
+                        }
+                        orderId = checkActiveQueryRes.rows[0].id;
+                        sql = "\n        UPDATE orders \n        SET current_status = $1 \n        WHERE id = $2 \n        RETURNING *;\n      ";
+                        return [4 /*yield*/, conn.query(sql, ['complete', orderId])];
+                    case 3:
+                        result = _a.sent();
+                        conn.release();
+                        resData = lodash_1.default.pick(result.rows[0], [
+                            'id',
+                            'user_id',
+                            'current_status',
+                            'created_at',
+                        ]);
+                        return [2 /*return*/, resData];
+                    case 4:
+                        err_2 = _a.sent();
+                        throw new Error("Failed to update order status: ".concat(err_2));
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Get the active order for a user.
+     * @param userId The ID of the user.
+     * @returns A Promise containing the active order information.
+     */
+    OrderModel.prototype.getActiveOrder = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var conn, sql, result, resData, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        query = 'SELECT * FROM orders WHERE id = $1';
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        return [4 /*yield*/, conn.query(query, [id])];
+                        sql = 'SELECT * FROM orders WHERE user_id = $1 AND current_status = $2';
+                        return [4 /*yield*/, conn.query(sql, [userId, 'active'])];
                     case 2:
                         result = _a.sent();
                         conn.release();
-                        return [2 /*return*/, result.rows[0]];
+                        if (result.rows.length === 0) {
+                            throw new Error("No active order found for user ".concat(userId));
+                        }
+                        resData = lodash_1.default.pick(result.rows[0], [
+                            'id',
+                            'user_id',
+                            'current_status',
+                            'created_at',
+                        ]);
+                        return [2 /*return*/, resData];
                     case 3:
-                        error_2 = _a.sent();
-                        throw new Error("Could not find Order ".concat(id, ". Error: ").concat(error_2));
+                        err_3 = _a.sent();
+                        throw new Error("Failed to retrieve active order: ".concat(err_3));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    ProductModel.prototype.createOrder = function (order) {
+    /**
+     * Get the completed orders for a user.
+     * @param userId The ID of the user.
+     * @returns A Promise containing an array of completed orders.
+     */
+    OrderModel.prototype.getCompletedOrders = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, conn, values, rows, error_3;
+            var conn, sql, result, orderList, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        query = 'INSERT INTO orders (user_id, total) VALUES ($1, $2) RETURNING *';
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        values = [order.user_id, order.total];
-                        return [4 /*yield*/, conn.query(query, values)];
+                        sql = 'SELECT * FROM orders WHERE user_id = $1 AND current_status = $2';
+                        return [4 /*yield*/, conn.query(sql, [userId, 'complete'])];
                     case 2:
-                        rows = (_a.sent()).rows;
+                        result = _a.sent();
                         conn.release();
-                        return [2 /*return*/, rows[0]];
+                        orderList = result.rows.map(function (order) { return ({
+                            id: order.id,
+                            user_id: order.user_id,
+                            current_status: order.current_status,
+                            created_at: order.created_at,
+                        }); });
+                        return [2 /*return*/, orderList];
                     case 3:
-                        error_3 = _a.sent();
-                        throw new Error("Could not add new Order ".concat(order.user_id, ". Error: ").concat(error_3));
+                        err_4 = _a.sent();
+                        throw new Error("Failed to retrieve completed orders: ".concat(err_4));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    ProductModel.prototype.updateOrder = function (order) {
+    /**
+     * Add a product to the active order of a user.
+     * @param userId The ID of the user.
+     * @param productId The ID of the product.
+     * @param quantityInput The quantity of the product to add.
+     * @returns A Promise containing the details of the updated order.
+     */
+    OrderModel.prototype.addProductToOrder = function (userId, productId, quantity) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var query, values, conn, rows, error_4;
+            var conn, orderQuery, orderResult, orderId, checkProductQuery, checkProductResult, updateProductQuery, updateResult, resData, addProductQuery, insertResult, resData, err_5;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 13, , 14]);
+                        return [4 /*yield*/, database_1.default.connect()];
+                    case 1:
+                        conn = _b.sent();
+                        // Start a transaction
+                        return [4 /*yield*/, conn.query('BEGIN')];
+                    case 2:
+                        // Start a transaction
+                        _b.sent();
+                        orderQuery = "SELECT id FROM orders WHERE user_id = $1 AND current_status = 'active' FOR UPDATE;";
+                        return [4 /*yield*/, conn.query(orderQuery, [userId])];
+                    case 3:
+                        orderResult = _b.sent();
+                        orderId = (_a = orderResult.rows[0]) === null || _a === void 0 ? void 0 : _a.id;
+                        if (!!orderId) return [3 /*break*/, 5];
+                        return [4 /*yield*/, conn.query('ROLLBACK')];
+                    case 4:
+                        _b.sent();
+                        conn.release();
+                        console.error("There are no active orders for user ".concat(userId));
+                        return [2 /*return*/, undefined];
+                    case 5:
+                        checkProductQuery = 'SELECT * FROM order_details WHERE order_id = $1 AND product_id = $2;';
+                        return [4 /*yield*/, conn.query(checkProductQuery, [
+                                orderId,
+                                productId,
+                            ])];
+                    case 6:
+                        checkProductResult = _b.sent();
+                        if (!(checkProductResult.rows.length > 0)) return [3 /*break*/, 9];
+                        updateProductQuery = 'UPDATE order_details SET quantity = $1 WHERE order_id = $2 AND product_id = $3 RETURNING *;';
+                        return [4 /*yield*/, conn.query(updateProductQuery, [
+                                quantity,
+                                orderId,
+                                productId,
+                            ])];
+                    case 7:
+                        updateResult = _b.sent();
+                        // Commit the transaction
+                        return [4 /*yield*/, conn.query('COMMIT')];
+                    case 8:
+                        // Commit the transaction
+                        _b.sent();
+                        conn.release();
+                        resData = lodash_1.default.pick(updateResult.rows[0], [
+                            'id',
+                            'product_id',
+                            'quantity',
+                            'order_id',
+                        ]);
+                        return [2 /*return*/, resData];
+                    case 9:
+                        addProductQuery = 'INSERT INTO order_details (product_id, quantity, order_id) VALUES ($1, $2, $3) RETURNING *;';
+                        return [4 /*yield*/, conn.query(addProductQuery, [
+                                productId,
+                                quantity,
+                                orderId,
+                            ])];
+                    case 10:
+                        insertResult = _b.sent();
+                        // Commit the transaction
+                        return [4 /*yield*/, conn.query('COMMIT')];
+                    case 11:
+                        // Commit the transaction
+                        _b.sent();
+                        conn.release();
+                        resData = lodash_1.default.pick(insertResult.rows[0], [
+                            'id',
+                            'product_id',
+                            'quantity',
+                            'order_id',
+                        ]);
+                        return [2 /*return*/, resData];
+                    case 12: return [3 /*break*/, 14];
+                    case 13:
+                        err_5 = _b.sent();
+                        throw new Error("Cannot add product ".concat(productId, " to order: ").concat(err_5));
+                    case 14: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Remove a product from the active order of a user.
+     * @param userId The ID of the user.
+     * @param productId The ID of the product.
+     * @returns A Promise containing the details of the updated order.
+     */
+    OrderModel.prototype.removeProductFromOrder = function (userId, productId) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var conn, orderQuery, orderResult, orderId, deleteProductQuery, result, resData, err_6;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _b.trys.push([0, 8, , 9]);
+                        return [4 /*yield*/, database_1.default.connect()];
+                    case 1:
+                        conn = _b.sent();
+                        // Start a transaction
+                        return [4 /*yield*/, conn.query('BEGIN')];
+                    case 2:
+                        // Start a transaction
+                        _b.sent();
+                        orderQuery = "SELECT id FROM orders WHERE user_id = $1 AND current_status = 'active' FOR UPDATE;";
+                        return [4 /*yield*/, conn.query(orderQuery, [userId])];
+                    case 3:
+                        orderResult = _b.sent();
+                        orderId = (_a = orderResult.rows[0]) === null || _a === void 0 ? void 0 : _a.id;
+                        if (!!orderId) return [3 /*break*/, 5];
+                        return [4 /*yield*/, conn.query('ROLLBACK')];
+                    case 4:
+                        _b.sent();
+                        conn.release();
+                        console.error("There are no active orders for user ".concat(userId));
+                        return [2 /*return*/, undefined];
+                    case 5:
+                        deleteProductQuery = 'DELETE FROM order_details WHERE order_id = $1 AND product_id = $2 RETURNING *;';
+                        return [4 /*yield*/, conn.query(deleteProductQuery, [orderId, productId])];
+                    case 6:
+                        result = _b.sent();
+                        // Commit the transaction
+                        return [4 /*yield*/, conn.query('COMMIT')];
+                    case 7:
+                        // Commit the transaction
+                        _b.sent();
+                        conn.release();
+                        resData = lodash_1.default.pick(result.rows[0], [
+                            'id',
+                            'product_id',
+                            'quantity',
+                            'order_id',
+                        ]);
+                        return [2 /*return*/, resData];
+                    case 8:
+                        err_6 = _b.sent();
+                        throw new Error("Could not delete product ".concat(productId, " from order: ").concat(err_6));
+                    case 9: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Get all products that a user has ordered along with quantity and total amount.
+     * @param userId The ID of the user.
+     * @returns A Promise containing an array of products with quantity and total amount.
+     */
+    OrderModel.prototype.getOrderedProducts = function (userId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var conn, sql, result, productList, err_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        return [4 /*yield*/, database_1.default.connect()];
+                    case 1:
+                        conn = _a.sent();
+                        sql = "\n        SELECT p.id AS product_id, p.name AS product_name, od.quantity, p.price, (od.quantity * p.price) AS total_amount\n        FROM orders o\n        JOIN order_details od ON o.id = od.order_id\n        JOIN products p ON p.id = od.product_id\n        WHERE o.user_id = $1;\n      ";
+                        return [4 /*yield*/, conn.query(sql, [userId])];
+                    case 2:
+                        result = _a.sent();
+                        conn.release();
+                        productList = result.rows.map(function (row) { return ({
+                            product_id: row.product_id,
+                            product_name: row.product_name,
+                            quantity: row.quantity,
+                            price: row.price,
+                            total_amount: row.total_amount,
+                        }); });
+                        return [2 /*return*/, productList];
+                    case 3:
+                        err_7 = _a.sent();
+                        throw new Error("Failed to retrieve ordered products: ".concat(err_7));
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * Get the total amount for all orders of a user.
+     * @param userId The ID of the user.
+     * @returns A Promise containing the total amount of all orders.
+     */
+    OrderModel.prototype.getTotalAmountForAllOrders = function (userId) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function () {
+            var conn, sql, result, totalAmount, err_8;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 3, , 4]);
-                        query = 'UPDATE orders SET user_id = $1, total = $2 WHERE id = $3 RETURNING *';
-                        values = [order.user_id, order.total, (_a = order.id) !== null && _a !== void 0 ? _a : 1];
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _b.sent();
-                        return [4 /*yield*/, conn.query(query, values)];
+                        sql = "\n        SELECT SUM(od.quantity * p.price) AS total_amount\n        FROM orders o\n        JOIN order_details od ON o.id = od.order_id\n        JOIN products p ON p.id = od.product_id\n        WHERE o.user_id = $1;\n      ";
+                        return [4 /*yield*/, conn.query(sql, [userId])];
                     case 2:
-                        rows = (_b.sent()).rows;
+                        result = _b.sent();
                         conn.release();
-                        return [2 /*return*/, rows[0]];
+                        totalAmount = ((_a = result.rows[0]) === null || _a === void 0 ? void 0 : _a.total_amount) || 0;
+                        return [2 /*return*/, totalAmount];
                     case 3:
-                        error_4 = _b.sent();
-                        throw new Error("Could not alter Order ".concat(order.id, ". Error: ").concat(error_4));
+                        err_8 = _b.sent();
+                        throw new Error("Failed to retrieve total amount for all orders: ".concat(err_8));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    ProductModel.prototype.deleteOrder = function (id) {
-        return __awaiter(this, void 0, void 0, function () {
-            var query, conn, result, rows, error_5;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        query = 'DELETE FROM orders WHERE id = $1';
-                        return [4 /*yield*/, database_1.default.connect()];
-                    case 1:
-                        conn = _a.sent();
-                        return [4 /*yield*/, conn.query(query, [id])];
-                    case 2:
-                        result = _a.sent();
-                        rows = result.rows[0];
-                        conn.release();
-                        return [2 /*return*/, rows];
-                    case 3:
-                        error_5 = _a.sent();
-                        throw new Error("Could not delete Order ".concat(id, ". Error: ").concat(error_5));
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    return ProductModel;
+    return OrderModel;
 }());
-exports.ProductModel = ProductModel;
+exports.OrderModel = OrderModel;

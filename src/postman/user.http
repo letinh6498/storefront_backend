@@ -1,39 +1,96 @@
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTY4NDY3ODA5NCwiZXhwIjoxNjg0Njc4OTk0fQ.gZTfgCDHMEFyGtvk3bAQpEY1uAYk8Cp84maKsqlHn4U
+@refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTY4NDY3ODA5NCwiZXhwIjoxNjg1MjgyODk0fQ.MKw2djexc59es9YLNtgKxjbLXxMIoJg0p6rpLT0Tz1c
 @url=http://localhost:3000
-@id=1
+###
+### Get All Users
+###
 
-### create user
-POST   {{url}}/users/
-Content-Type: application/json
+GET {{url}}/users
+Authorization: Bearer {{token}}
 
-{   
-    "username": "nhatnam",
-    "email":"tinhsle@gmail.com",
-    "password": 101233123,
-    "first_name": "nam",
-    "last_name": "nguyen"
-}
 
-### get all user
-GET {{url}}/users/
+###
+### Get User by ID
+###
 
-### get user by Id
-GET {{url}}/users/{{id}}
+GET {{url}}/users/1
+Authorization: Bearer {{token}}
 
-### udate user
-PUT  {{url}}/users/{{id}}
+
+###
+### Create User
+###
+
+POST {{url}}/users
 Content-Type: application/json
 
 {
-    "username": "nhat nam",
-    "email":"nhatnam@gmail.com",
-    "password": 10,
-    "first_name": "tinh",
-    "last_name": "le"
+  "username": "user1",
+  "email": "abc@gmail.com",
+  "password": "123",
+  "first_name": "Tinh",
+  "last_name": "Le"
 }
 
-### delete  user by id
-DELETE {{url}}/users/{{id}}
+
+###
+### Update User
+###
+
+PUT {{url}}/users/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "username": "user1update",
+  "email": "abc1@gmail.com",
+  "password": "1234",
+  "first_name": "Tinh",
+  "last_name": "Le"
+}
 
 
+###
+### Delete User
+###
+
+DELETE {{url}}/users/1
+Authorization: Bearer {{token}}
 
 
+###
+### Authenticate
+###
+
+POST {{url}}/authenticate
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "123"
+}
+
+
+###
+### Login
+###
+
+POST {{url}}/login
+Content-Type: application/json
+
+{
+  "username": "user1",
+  "password": "123"
+}
+
+
+###
+### Refresh Token
+###
+
+POST {{url}}/refreshtoken
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}

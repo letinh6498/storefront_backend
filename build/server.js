@@ -6,13 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var body_parser_1 = __importDefault(require("body-parser"));
 var product_handle_1 = __importDefault(require("./handlers/product.handle"));
-var users_1 = __importDefault(require("./handlers/users"));
+var user_handle_1 = __importDefault(require("./handlers/user.handle"));
+var order_handle_1 = __importDefault(require("./handlers/order.handle"));
+var dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 var app = (0, express_1.default)();
-// @ts-ignore
-var address = 'http://localhost:3000';
+var PORT = process.env.PORT || 3000;
 app.use(body_parser_1.default.json());
 (0, product_handle_1.default)(app);
-(0, users_1.default)(app);
-app.listen(3000, function () {
-    console.log("App listening on ".concat(address));
+(0, user_handle_1.default)(app);
+(0, order_handle_1.default)(app);
+app.listen(PORT, function () {
+    console.log("App listening on PORT:::".concat(PORT));
 });

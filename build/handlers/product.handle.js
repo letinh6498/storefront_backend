@@ -37,83 +37,138 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var product_model_1 = require("../models/product.model");
+var verifyAuthToken_1 = require("../middleware/verifyAuthToken");
 var productInstance = new product_model_1.ProductModel();
 var getAllProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var products;
+    var products, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, productInstance.getAllProduct()];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, productInstance.getAllProducts()];
             case 1:
                 products = _a.sent();
                 res.json(products);
-                return [2 /*return*/];
+                return [3 /*break*/, 3];
+            case 2:
+                err_1 = _a.sent();
+                res.status(500).json({ error: 'Failed to fetch products.' });
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
 var getProductById = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, product;
+    var id, product, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = req.params.id;
-                return [4 /*yield*/, productInstance.getProductById(id)];
+                _a.label = 1;
             case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, productInstance.getProductById(id)];
+            case 2:
                 product = _a.sent();
-                res.json(product);
-                return [2 /*return*/];
+                if (!product) {
+                    res.status(404).json({ error: 'Product not found.' });
+                }
+                else {
+                    res.json(product);
+                }
+                return [3 /*break*/, 4];
+            case 3:
+                err_2 = _a.sent();
+                res.status(500).json({ error: 'Failed to fetch product.' });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
 var createProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name, description, price, product, newProduct;
+    var _a, name, description, price, product, newProduct, err_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _a = req.body, name = _a.name, description = _a.description, price = _a.price;
                 product = { name: name, description: description, price: price };
-                return [4 /*yield*/, productInstance.createProduct(product)];
+                _b.label = 1;
             case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, productInstance.createProduct(product)];
+            case 2:
                 newProduct = _b.sent();
                 res.json(newProduct);
-                return [2 /*return*/];
+                return [3 /*break*/, 4];
+            case 3:
+                err_3 = _b.sent();
+                res.status(500).json({ error: 'Failed to create product.' });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
 var deleteProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, product;
+    var id, product, err_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 id = req.params.id;
-                return [4 /*yield*/, productInstance.deleteProduct(+id)];
+                _a.label = 1;
             case 1:
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, productInstance.deleteProduct(+id)];
+            case 2:
                 product = _a.sent();
-                res.json(product);
-                return [2 /*return*/];
+                if (!product) {
+                    res.status(404).json({ error: 'Product not found.' });
+                }
+                else {
+                    res.json(product);
+                }
+                return [3 /*break*/, 4];
+            case 3:
+                err_4 = _a.sent();
+                res.status(500).json({ error: 'Failed to delete product.' });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
 var updateProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var id, _a, name, description, price, product, newProduct;
+    var id, _a, name, description, price, product, updatedProduct, err_5;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 id = req.params.id;
                 _a = req.body, name = _a.name, description = _a.description, price = _a.price;
                 product = { name: name, description: description, price: price };
-                return [4 /*yield*/, productInstance.updateProduct(+id, product)];
+                _b.label = 1;
             case 1:
-                newProduct = _b.sent();
-                res.json(newProduct);
-                return [2 /*return*/];
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, productInstance.updateProduct(+id, product)];
+            case 2:
+                updatedProduct = _b.sent();
+                if (!updatedProduct) {
+                    res.status(404).json({ error: 'Product not found.' });
+                }
+                else {
+                    res.json(updatedProduct);
+                }
+                return [3 /*break*/, 4];
+            case 3:
+                err_5 = _b.sent();
+                res.status(500).json({ error: 'Failed to update product.' });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); };
-var mythical_weapon_routes = function (app) {
-    app.get('/products', getAllProduct);
-    app.post('/products', createProduct);
-    app.get('/products/:id', getProductById);
-    app.put('/products/:id', updateProduct);
-    app.delete('/products/:id', deleteProduct);
+var product_routes = function (app) {
+    app.get('/products', verifyAuthToken_1.verifyAuthToken, getAllProduct);
+    app.post('/products', verifyAuthToken_1.verifyAuthToken, createProduct);
+    app.get('/products/:id', verifyAuthToken_1.verifyAuthToken, getProductById);
+    app.put('/products/:id', verifyAuthToken_1.verifyAuthToken, updateProduct);
+    app.delete('/products/:id', verifyAuthToken_1.verifyAuthToken, deleteProduct);
 };
-exports.default = mythical_weapon_routes;
+exports.default = product_routes;

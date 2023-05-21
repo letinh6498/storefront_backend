@@ -44,7 +44,11 @@ var database_1 = __importDefault(require("../database"));
 var ProductModel = /** @class */ (function () {
     function ProductModel() {
     }
-    ProductModel.prototype.getAllProduct = function () {
+    /**
+     * Retrieves all products from the database.
+     * @returns A Promise containing an array of all products.
+     */
+    ProductModel.prototype.getAllProducts = function () {
         return __awaiter(this, void 0, void 0, function () {
             var conn, query, result, error_1;
             return __generator(this, function (_a) {
@@ -62,12 +66,17 @@ var ProductModel = /** @class */ (function () {
                         return [2 /*return*/, result.rows];
                     case 3:
                         error_1 = _a.sent();
-                        throw new Error("Could not get products. Error: ".concat(error_1));
+                        throw new Error("Failed to retrieve products. Error: ".concat(error_1));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
+    /**
+     * Retrieves a product by its ID from the database.
+     * @param id The ID of the product to retrieve.
+     * @returns A Promise containing the product information.
+     */
     ProductModel.prototype.getProductById = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var query, conn, result, error_2;
@@ -86,15 +95,20 @@ var ProductModel = /** @class */ (function () {
                         return [2 /*return*/, result.rows[0]];
                     case 3:
                         error_2 = _a.sent();
-                        throw new Error("Could not find product ".concat(id, ". Error: ").concat(error_2));
+                        throw new Error("Failed to retrieve product ".concat(id, ". Error: ").concat(error_2));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
+    /**
+     * Creates a new product in the database.
+     * @param product The product data to be created.
+     * @returns A Promise containing the created product information.
+     */
     ProductModel.prototype.createProduct = function (product) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, conn, values, rows, error_3;
+            var query, conn, values, result, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -106,20 +120,26 @@ var ProductModel = /** @class */ (function () {
                         values = [product.name, product.description, product.price];
                         return [4 /*yield*/, conn.query(query, values)];
                     case 2:
-                        rows = (_a.sent()).rows;
+                        result = _a.sent();
                         conn.release();
-                        return [2 /*return*/, rows[0]];
+                        return [2 /*return*/, result.rows[0]];
                     case 3:
                         error_3 = _a.sent();
-                        throw new Error("Could not add new product ".concat(product.name, ". Error: ").concat(error_3));
+                        throw new Error("Failed to create product. Error: ".concat(error_3));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
+    /**
+     * Updates an existing product in the database.
+     * @param id The ID of the product to update.
+     * @param product The updated product data.
+     * @returns A Promise containing the updated product information.
+     */
     ProductModel.prototype.updateProduct = function (id, product) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, values, conn, rows, error_4;
+            var query, values, conn, result, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -131,37 +151,41 @@ var ProductModel = /** @class */ (function () {
                         conn = _a.sent();
                         return [4 /*yield*/, conn.query(query, values)];
                     case 2:
-                        rows = (_a.sent()).rows;
+                        result = _a.sent();
                         conn.release();
-                        return [2 /*return*/, rows[0]];
+                        return [2 /*return*/, result.rows[0]];
                     case 3:
                         error_4 = _a.sent();
-                        throw new Error("Could not alter product ".concat(product.name, ". Error: ").concat(error_4));
+                        throw new Error("Failed to update product ".concat(id, ". Error: ").concat(error_4));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
+    /**
+     * Deletes a product from the database.
+     * @param id The ID of the product to delete.
+     * @returns A Promise containing the deleted product information.
+     */
     ProductModel.prototype.deleteProduct = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, conn, result, rows, error_5;
+            var query, conn, result, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        query = 'DELETE FROM products WHERE id = $1';
+                        query = 'DELETE FROM products WHERE id = $1 RETURNING *';
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
                         return [4 /*yield*/, conn.query(query, [id])];
                     case 2:
                         result = _a.sent();
-                        rows = result.rows[0];
                         conn.release();
-                        return [2 /*return*/, rows];
+                        return [2 /*return*/, result.rows[0]];
                     case 3:
                         error_5 = _a.sent();
-                        throw new Error("Could not delete product ".concat(id, ". Error: ").concat(error_5));
+                        throw new Error("Failed to delete product ".concat(id, ". Error: ").concat(error_5));
                     case 4: return [2 /*return*/];
                 }
             });

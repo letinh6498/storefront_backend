@@ -35,22 +35,66 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var mythical_weapon_1 = require("../models/mythical_weapon");
-var store = new mythical_weapon_1.MythicalWeaponStore();
-var index = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var weapon;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, store.index()];
-            case 1:
-                weapon = _a.sent();
-                res.json(weapon);
-                return [2 /*return*/];
-        }
-    });
-}); };
-var mythical_weapon_routes = function (app) {
-    app.get('/products', index);
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-exports.default = mythical_weapon_routes;
+Object.defineProperty(exports, "__esModule", { value: true });
+var user_model_1 = require("../../models/user.model");
+var database_1 = __importDefault(require("../../database"));
+var dotenv_1 = __importDefault(require("dotenv"));
+var bcrypt_1 = __importDefault(require("bcrypt"));
+dotenv_1.default.config();
+var _a = process.env, PEPPER = _a.PEPPER, SALT_ROUNDS = _a.SALT_ROUNDS;
+var store = new user_model_1.UserModel();
+var user = {
+    username: 'user',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    email: 'abc@gmail.com',
+    password: 'password',
+};
+describe('User model', function () {
+    it('has an index method', function () {
+        expect(store.getAllUsers).toBeDefined();
+    });
+    it('has a show method', function () {
+        expect(store.getUserById).toBeDefined();
+    });
+    it('has a create method', function () {
+        expect(store.createUser).toBeDefined();
+    });
+    it('has an authenticate method', function () {
+        expect(store.authenticate).toBeDefined();
+    });
+});
+describe('User model method', function () {
+    beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
+        var conn, hashedPassword, sql;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, database_1.default.connect()];
+                case 1:
+                    conn = _a.sent();
+                    hashedPassword = bcrypt_1.default.hashSync(user.password + PEPPER, parseInt(SALT_ROUNDS));
+                    sql = 'INSERT INTO users (username, email, first_name, last_name, password) VALUES ($1, $2, $3, $4, $5);';
+                    return [4 /*yield*/, conn.query(sql, [
+                            user.username,
+                            user.email,
+                            user.first_name,
+                            user.last_name,
+                            hashedPassword,
+                        ])];
+                case 2:
+                    _a.sent();
+                    conn.release();
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+    // afterAll(async () => {
+    //   const conn = await client.connect();
+    //   await conn.query('DELETE FROM users;');
+    //   await conn.query('ALTER SEQUENCE users_id_seq RESTART WITH 1;');
+    //   conn.release();
+    // });
+});

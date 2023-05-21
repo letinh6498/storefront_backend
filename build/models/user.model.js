@@ -70,10 +70,16 @@ var jwt = __importStar(require("jsonwebtoken"));
 dotenv_1.default.config();
 var PEPPER = process.env.PEPPER;
 var TOKEN_SECRET = process.env.TOKEN_SECRET;
-var SALTROUNDS = 10;
+var SALT_ROUNDS = 10;
 var UserModel = /** @class */ (function () {
     function UserModel() {
         var _this = this;
+        /**
+         * Refreshes the access and refresh tokens using the old refresh token.
+         * @param oldRefreshToken The old refresh token.
+         * @returns A Promise containing the new access and refresh tokens.
+         * @throws Error if the old refresh token is invalid.
+         */
         this.refreshToken = function (oldRefreshToken) { return __awaiter(_this, void 0, void 0, function () {
             var decoded, userId, newAccessToken, newRefreshToken;
             return __generator(this, function (_a) {
@@ -95,6 +101,11 @@ var UserModel = /** @class */ (function () {
             });
         }); };
     }
+    /**
+     * Creates a new user in the database.
+     * @param user The user data to be created.
+     * @returns A Promise containing the created user information.
+     */
     UserModel.prototype.createUser = function (user) {
         return __awaiter(this, void 0, void 0, function () {
             var query, conn, salt, passwordHash, values, rows, error_1;
@@ -102,13 +113,20 @@ var UserModel = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        query = "INSERT INTO users (username, email, password)\n                        SELECT $1, $2, $3\n                        WHERE NOT EXISTS (\n                            SELECT username FROM users WHERE username = ($4)\n                        ) RETURNING *";
+                        query = "INSERT INTO users (username, email, password, first_name, last_name)\n                        SELECT $1, $2, $3, $4, $5\n                        WHERE NOT EXISTS (\n                            SELECT username FROM users WHERE username = $6\n                        ) RETURNING *";
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        salt = bcrypt_1.default.genSaltSync(SALTROUNDS);
+                        salt = bcrypt_1.default.genSaltSync(SALT_ROUNDS);
                         passwordHash = bcrypt_1.default.hashSync(user.password + PEPPER, salt);
-                        values = [user.username, user.email, passwordHash, user.username];
+                        values = [
+                            user.username,
+                            user.email,
+                            passwordHash,
+                            user.first_name,
+                            user.last_name,
+                            user.username,
+                        ];
                         return [4 /*yield*/, conn.query(query, values)];
                     case 2:
                         rows = (_a.sent()).rows;
@@ -116,13 +134,17 @@ var UserModel = /** @class */ (function () {
                         return [2 /*return*/, rows[0]];
                     case 3:
                         error_1 = _a.sent();
-                        throw new Error("Could not add new user ".concat(user.username, ". Error: ").concat(error_1));
+                        throw new Error("Failed to create user ".concat(user.username, ". Error: ").concat(error_1));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    UserModel.prototype.getAllUser = function () {
+    /**
+     * Retrieves all users from the database.
+     * @returns A Promise containing an array of all users.
+     */
+    UserModel.prototype.getAllUsers = function () {
         return __awaiter(this, void 0, void 0, function () {
             var conn, query, result, error_2;
             return __generator(this, function (_a) {
@@ -140,12 +162,17 @@ var UserModel = /** @class */ (function () {
                         return [2 /*return*/, result.rows];
                     case 3:
                         error_2 = _a.sent();
-                        throw new Error("Could not get Users. Error: ".concat(error_2));
+                        throw new Error("Failed to retrieve users. Error: ".concat(error_2));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
+    /**
+     * Retrieves a user by their ID from the database.
+     * @param id The ID of the user to retrieve.
+     * @returns A Promise containing the user information.
+     */
     UserModel.prototype.getUserById = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var query, conn, result, error_3;
@@ -164,38 +191,57 @@ var UserModel = /** @class */ (function () {
                         return [2 /*return*/, result.rows[0]];
                     case 3:
                         error_3 = _a.sent();
-                        throw new Error("Could not find User ".concat(id, ". Error: ").concat(error_3));
+                        throw new Error("Failed to retrieve user ".concat(id, ". Error: ").concat(error_3));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
-    UserModel.prototype.updateUser = function (user) {
-        var _a;
+    /**
+     * Updates an existing user in the database.
+     * @param id The ID of the user to update.
+     * @param user The updated user data.
+     * @returns A Promise containing the updated user information.
+     */
+    UserModel.prototype.updateUser = function (id, user) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, values, conn, rows, error_4;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var query, salt, passwordHash, values, conn, rows, error_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
-                        _b.trys.push([0, 3, , 4]);
-                        query = 'UPDATE users SET username = $1, email = $2, password = $3 WHERE id = $4 RETURNING *';
-                        values = [user.username, user.email, user.password, (_a = user.id) !== null && _a !== void 0 ? _a : 1];
+                        _a.trys.push([0, 3, , 4]);
+                        query = "UPDATE users SET username = $1, \n                                      email = $2, \n                                      password = $3, \n                                      first_name = $4, \n                                      last_name = $5 \n                                  WHERE id = $6 RETURNING *";
+                        salt = bcrypt_1.default.genSaltSync(SALT_ROUNDS);
+                        passwordHash = bcrypt_1.default.hashSync(user.password + PEPPER, salt);
+                        values = [
+                            user.username,
+                            user.email,
+                            passwordHash,
+                            user.first_name,
+                            user.last_name,
+                            id,
+                        ];
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
-                        conn = _b.sent();
+                        conn = _a.sent();
                         return [4 /*yield*/, conn.query(query, values)];
                     case 2:
-                        rows = (_b.sent()).rows;
+                        rows = (_a.sent()).rows;
                         conn.release();
                         return [2 /*return*/, rows[0]];
                     case 3:
-                        error_4 = _b.sent();
-                        throw new Error("Could not alter user ".concat(user.username, ". Error: ").concat(error_4));
+                        error_4 = _a.sent();
+                        throw new Error("Failed to update user ".concat(user.username, ". Error: ").concat(error_4));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
+    /**
+     * Deletes a user from the database.
+     * @param id The ID of the user to delete.
+     * @returns A Promise containing the deleted user information.
+     */
     UserModel.prototype.deleteUser = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var query, conn, result, rows, error_5;
@@ -215,12 +261,18 @@ var UserModel = /** @class */ (function () {
                         return [2 /*return*/, rows];
                     case 3:
                         error_5 = _a.sent();
-                        throw new Error("Could not delete user ".concat(id, ". Error: ").concat(error_5));
+                        throw new Error("Failed to delete user ".concat(id, ". Error: ").concat(error_5));
                     case 4: return [2 /*return*/];
                 }
             });
         });
     };
+    /**
+     * Authenticates a user based on the provided username and password.
+     * @param username The username of the user.
+     * @param password The password of the user.
+     * @returns A Promise containing the authenticated user information or null if authentication fails.
+     */
     UserModel.prototype.authenticate = function (username, password) {
         return __awaiter(this, void 0, void 0, function () {
             var conn, sql, result, user;
@@ -229,13 +281,13 @@ var UserModel = /** @class */ (function () {
                     case 0: return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
-                        sql = 'SELECT * FROM users WHERE username=($1)';
+                        sql = 'SELECT * FROM users WHERE username = $1';
                         return [4 /*yield*/, conn.query(sql, [username])];
                     case 2:
                         result = _a.sent();
                         if (result.rows.length) {
                             user = result.rows[0];
-                            if (bcrypt_1.default.compareSync(password + PEPPER, user.password_digest)) {
+                            if (bcrypt_1.default.compareSync(password + PEPPER, user.password)) {
                                 return [2 /*return*/, user];
                             }
                         }
@@ -244,6 +296,12 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
+    /**
+     * Logs in a user and generates access and refresh tokens.
+     * @param username The username of the user.
+     * @param password The password of the user.
+     * @returns A Promise containing the access and refresh tokens.
+     */
     UserModel.prototype.login = function (username, password) {
         return __awaiter(this, void 0, void 0, function () {
             var conn, result, user, isPasswordCorrect, accessToken, refreshToken;
@@ -262,7 +320,7 @@ var UserModel = /** @class */ (function () {
                             throw new Error('User not found');
                         }
                         user = result.rows[0];
-                        return [4 /*yield*/, bcrypt_1.default.compareSync(password + PEPPER, user.password_digest)];
+                        return [4 /*yield*/, bcrypt_1.default.compareSync(password + PEPPER, user.password)];
                     case 3:
                         isPasswordCorrect = _a.sent();
                         if (!isPasswordCorrect) {
