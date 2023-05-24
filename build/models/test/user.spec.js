@@ -39,62 +39,66 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var user_model_1 = require("../../models/user.model");
+var supertest_1 = __importDefault(require("supertest"));
 var database_1 = __importDefault(require("../../database"));
-var dotenv_1 = __importDefault(require("dotenv"));
-var bcrypt_1 = __importDefault(require("bcrypt"));
-dotenv_1.default.config();
-var _a = process.env, PEPPER = _a.PEPPER, SALT_ROUNDS = _a.SALT_ROUNDS;
-var store = new user_model_1.UserModel();
-var user = {
-    username: 'user',
-    first_name: 'first_name',
-    last_name: 'last_name',
-    email: 'abc@gmail.com',
-    password: 'password',
-};
+var user_model_1 = require("../user.model");
+var base_url = 'http://localhost:3000';
+var usertUrl = '/users/';
+var request = (0, supertest_1.default)(base_url);
+var userInstance = new user_model_1.UserModel();
 describe('User model', function () {
-    it('has an index method', function () {
-        expect(store.getAllUsers).toBeDefined();
+    it('has an create method', function () {
+        expect(userInstance.createUser).toBeDefined();
     });
-    it('has a show method', function () {
-        expect(store.getUserById).toBeDefined();
+    it('has a get product by id method', function () {
+        expect(userInstance.getUserById).toBeDefined();
     });
-    it('has a create method', function () {
-        expect(store.createUser).toBeDefined();
+    it('has a get all products method', function () {
+        expect(userInstance.getAllUsers).toBeDefined();
     });
-    it('has an authenticate method', function () {
-        expect(store.authenticate).toBeDefined();
+    it('has an update method', function () {
+        expect(userInstance.updateUser).toBeDefined();
+    });
+    it('has an delete method', function () {
+        expect(userInstance.deleteUser).toBeDefined();
+    });
+    it('has login method', function () {
+        expect(userInstance.login).toBeDefined();
+    });
+    it('has authenticate method', function () {
+        expect(userInstance.authenticate).toBeDefined();
     });
 });
-describe('User model method', function () {
-    beforeAll(function () { return __awaiter(void 0, void 0, void 0, function () {
-        var conn, hashedPassword, sql;
+function prepareDB() {
+    return __awaiter(this, void 0, void 0, function () {
+        var conn, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, database_1.default.connect()];
+                case 0:
+                    _a.trys.push([0, 6, , 7]);
+                    return [4 /*yield*/, database_1.default.connect()];
                 case 1:
                     conn = _a.sent();
-                    hashedPassword = bcrypt_1.default.hashSync(user.password + PEPPER, parseInt(SALT_ROUNDS));
-                    sql = 'INSERT INTO users (username, email, first_name, last_name, password) VALUES ($1, $2, $3, $4, $5);';
-                    return [4 /*yield*/, conn.query(sql, [
-                            user.username,
-                            user.email,
-                            user.first_name,
-                            user.last_name,
-                            hashedPassword,
-                        ])];
+                    return [4 /*yield*/, conn.query('DELETE FROM products')];
                 case 2:
                     _a.sent();
+                    return [4 /*yield*/, conn.query('DELETE FROM users')];
+                case 3:
+                    _a.sent();
+                    return [4 /*yield*/, conn.query('ALTER SEQUENCE users_id_seq RESTART WITH 1')];
+                case 4:
+                    _a.sent();
+                    return [4 /*yield*/, conn.query('ALTER SEQUENCE products_id_seq RESTART WITH 1')];
+                case 5:
+                    _a.sent();
                     conn.release();
-                    return [2 /*return*/];
+                    return [3 /*break*/, 7];
+                case 6:
+                    error_1 = _a.sent();
+                    console.log(error_1);
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
-    }); });
-    // afterAll(async () => {
-    //   const conn = await client.connect();
-    //   await conn.query('DELETE FROM users;');
-    //   await conn.query('ALTER SEQUENCE users_id_seq RESTART WITH 1;');
-    //   conn.release();
-    // });
-});
+    });
+}

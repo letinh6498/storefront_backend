@@ -9,7 +9,7 @@ const getAllProduct = async (req: Request, res: Response) => {
     const products = await productInstance.getAllProducts();
     res.json(products);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch products.' });
+    res.status(400).json({ error: (err as Error).message });
   }
 };
 
@@ -23,7 +23,7 @@ const getProductById = async (req: Request, res: Response) => {
       res.json(product);
     }
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch product.' });
+    res.status(400).json({ error: (err as Error).message });
   }
 };
 
@@ -34,7 +34,7 @@ const createProduct = async (req: Request, res: Response) => {
     const newProduct = await productInstance.createProduct(product);
     res.json(newProduct);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create product.' });
+    res.status(400).json({ error: (err as Error).message });
   }
 };
 
@@ -48,7 +48,7 @@ const deleteProduct = async (req: Request, res: Response) => {
       res.json(product);
     }
   } catch (err) {
-    res.status(500).json({ error: 'Failed to delete product.' });
+    res.status(400).json({ error: (err as Error).message });
   }
 };
 
@@ -64,7 +64,7 @@ const updateProduct = async (req: Request, res: Response) => {
       res.json(updatedProduct);
     }
   } catch (err) {
-    res.status(500).json({ error: 'Failed to update product.' });
+    res.status(400).json({ error: (err as Error).message });
   }
 };
 

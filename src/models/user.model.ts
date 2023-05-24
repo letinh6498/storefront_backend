@@ -23,11 +23,6 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET as string;
 const SALT_ROUNDS = 10;
 
 export class UserModel {
-  /**
-   * Creates a new user in the database.
-   * @param user The user data to be created.
-   * @returns A Promise containing the created user information.
-   */
   async createUser(user: User): Promise<User> {
     try {
       const query = `INSERT INTO users (username, email, password, first_name, last_name)
@@ -56,10 +51,6 @@ export class UserModel {
     }
   }
 
-  /**
-   * Retrieves all users from the database.
-   * @returns A Promise containing an array of all users.
-   */
   async getAllUsers(): Promise<User[]> {
     try {
       const conn = await client.connect();
@@ -72,11 +63,6 @@ export class UserModel {
     }
   }
 
-  /**
-   * Retrieves a user by their ID from the database.
-   * @param id The ID of the user to retrieve.
-   * @returns A Promise containing the user information.
-   */
   async getUserById(id: number): Promise<User> {
     try {
       const query = 'SELECT * FROM users WHERE id = $1';
@@ -89,12 +75,6 @@ export class UserModel {
     }
   }
 
-  /**
-   * Updates an existing user in the database.
-   * @param id The ID of the user to update.
-   * @param user The updated user data.
-   * @returns A Promise containing the updated user information.
-   */
   async updateUser(id: number, user: User): Promise<User> {
     try {
       const query = `UPDATE users SET username = $1, 
@@ -124,11 +104,6 @@ export class UserModel {
     }
   }
 
-  /**
-   * Deletes a user from the database.
-   * @param id The ID of the user to delete.
-   * @returns A Promise containing the deleted user information.
-   */
   async deleteUser(id: number): Promise<User> {
     try {
       const query = 'DELETE FROM users WHERE id = $1';
@@ -142,12 +117,6 @@ export class UserModel {
     }
   }
 
-  /**
-   * Authenticates a user based on the provided username and password.
-   * @param username The username of the user.
-   * @param password The password of the user.
-   * @returns A Promise containing the authenticated user information or null if authentication fails.
-   */
   async authenticate(username: string, password: string): Promise<User | null> {
     const conn = await client.connect();
     const sql = 'SELECT * FROM users WHERE username = $1';
@@ -162,12 +131,6 @@ export class UserModel {
     return null;
   }
 
-  /**
-   * Logs in a user and generates access and refresh tokens.
-   * @param username The username of the user.
-   * @param password The password of the user.
-   * @returns A Promise containing the access and refresh tokens.
-   */
   async login(username: string, password: string) {
     const conn = await client.connect();
     const result = await conn.query('SELECT * FROM users WHERE username = $1', [
@@ -199,29 +162,4 @@ export class UserModel {
 
     return { accessToken, refreshToken };
   }
-
-  /**
-   * Refreshes the access and refresh tokens using the old refresh token.
-   * @param oldRefreshToken The old refresh token.
-   * @returns A Promise containing the new access and refresh tokens.
-   * @throws Error if the old refresh token is invalid.
-   */
-  refreshToken = async (oldRefreshToken: string) => {
-    try {
-      const decoded = jwt.verify(oldRefreshToken, TOKEN_SECRET) as DecodedToken;
-      const userId = decoded.userId;
-
-      const newAccessToken = jwt.sign({ userId }, TOKEN_SECRET, {
-        expiresIn: '15m',
-      });
-
-      const newRefreshToken = jwt.sign({ userId }, TOKEN_SECRET, {
-        expiresIn: '7d',
-      });
-
-      return { newAccessToken, newRefreshToken };
-    } catch (error) {
-      throw new Error('Invalid refresh token');
-    }
-  };
 }

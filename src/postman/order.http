@@ -1,4 +1,4 @@
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTY4NDY3ODA5NCwiZXhwIjoxNjg0Njc4OTk0fQ.gZTfgCDHMEFyGtvk3bAQpEY1uAYk8Cp84maKsqlHn4U
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4NDkzNDI3NSwiZXhwIjoxNjg0OTM1MTc1fQ.n9PlfjLobV3vwMkPvEiMGMbig7PLFj6NA-BQbH2Gw6w
 @url=http://localhost:3000
 ###
 ### Create Order
@@ -46,13 +46,13 @@ Authorization: Bearer {{token}}
 ### Add Product to Order
 ###
 
-POST {{url}}/orders/1/products
+POST {{url}}/orders/2/products
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "product_id": 1,
-  "quantity": 2
+  "product_id": 2,
+  "quantity": 1
 }
 
 

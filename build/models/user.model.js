@@ -73,39 +73,7 @@ var TOKEN_SECRET = process.env.TOKEN_SECRET;
 var SALT_ROUNDS = 10;
 var UserModel = /** @class */ (function () {
     function UserModel() {
-        var _this = this;
-        /**
-         * Refreshes the access and refresh tokens using the old refresh token.
-         * @param oldRefreshToken The old refresh token.
-         * @returns A Promise containing the new access and refresh tokens.
-         * @throws Error if the old refresh token is invalid.
-         */
-        this.refreshToken = function (oldRefreshToken) { return __awaiter(_this, void 0, void 0, function () {
-            var decoded, userId, newAccessToken, newRefreshToken;
-            return __generator(this, function (_a) {
-                try {
-                    decoded = jwt.verify(oldRefreshToken, TOKEN_SECRET);
-                    userId = decoded.userId;
-                    newAccessToken = jwt.sign({ userId: userId }, TOKEN_SECRET, {
-                        expiresIn: '15m',
-                    });
-                    newRefreshToken = jwt.sign({ userId: userId }, TOKEN_SECRET, {
-                        expiresIn: '7d',
-                    });
-                    return [2 /*return*/, { newAccessToken: newAccessToken, newRefreshToken: newRefreshToken }];
-                }
-                catch (error) {
-                    throw new Error('Invalid refresh token');
-                }
-                return [2 /*return*/];
-            });
-        }); };
     }
-    /**
-     * Creates a new user in the database.
-     * @param user The user data to be created.
-     * @returns A Promise containing the created user information.
-     */
     UserModel.prototype.createUser = function (user) {
         return __awaiter(this, void 0, void 0, function () {
             var query, conn, salt, passwordHash, values, rows, error_1;
@@ -140,10 +108,6 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Retrieves all users from the database.
-     * @returns A Promise containing an array of all users.
-     */
     UserModel.prototype.getAllUsers = function () {
         return __awaiter(this, void 0, void 0, function () {
             var conn, query, result, error_2;
@@ -168,11 +132,6 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Retrieves a user by their ID from the database.
-     * @param id The ID of the user to retrieve.
-     * @returns A Promise containing the user information.
-     */
     UserModel.prototype.getUserById = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var query, conn, result, error_3;
@@ -197,12 +156,6 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Updates an existing user in the database.
-     * @param id The ID of the user to update.
-     * @param user The updated user data.
-     * @returns A Promise containing the updated user information.
-     */
     UserModel.prototype.updateUser = function (id, user) {
         return __awaiter(this, void 0, void 0, function () {
             var query, salt, passwordHash, values, conn, rows, error_4;
@@ -237,11 +190,6 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Deletes a user from the database.
-     * @param id The ID of the user to delete.
-     * @returns A Promise containing the deleted user information.
-     */
     UserModel.prototype.deleteUser = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var query, conn, result, rows, error_5;
@@ -267,12 +215,6 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Authenticates a user based on the provided username and password.
-     * @param username The username of the user.
-     * @param password The password of the user.
-     * @returns A Promise containing the authenticated user information or null if authentication fails.
-     */
     UserModel.prototype.authenticate = function (username, password) {
         return __awaiter(this, void 0, void 0, function () {
             var conn, sql, result, user;
@@ -296,12 +238,6 @@ var UserModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Logs in a user and generates access and refresh tokens.
-     * @param username The username of the user.
-     * @param password The password of the user.
-     * @returns A Promise containing the access and refresh tokens.
-     */
     UserModel.prototype.login = function (username, password) {
         return __awaiter(this, void 0, void 0, function () {
             var conn, result, user, isPasswordCorrect, accessToken, refreshToken;

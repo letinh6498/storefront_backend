@@ -42,7 +42,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "username": "user1update",
+  "username": "user1",
   "email": "abc1@gmail.com",
   "password": "1234",
   "first_name": "Tinh",

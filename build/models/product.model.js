@@ -44,10 +44,6 @@ var database_1 = __importDefault(require("../database"));
 var ProductModel = /** @class */ (function () {
     function ProductModel() {
     }
-    /**
-     * Retrieves all products from the database.
-     * @returns A Promise containing an array of all products.
-     */
     ProductModel.prototype.getAllProducts = function () {
         return __awaiter(this, void 0, void 0, function () {
             var conn, query, result, error_1;
@@ -72,11 +68,6 @@ var ProductModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Retrieves a product by its ID from the database.
-     * @param id The ID of the product to retrieve.
-     * @returns A Promise containing the product information.
-     */
     ProductModel.prototype.getProductById = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var query, conn, result, error_2;
@@ -101,11 +92,6 @@ var ProductModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Creates a new product in the database.
-     * @param product The product data to be created.
-     * @returns A Promise containing the created product information.
-     */
     ProductModel.prototype.createProduct = function (product) {
         return __awaiter(this, void 0, void 0, function () {
             var query, conn, values, result, error_3;
@@ -131,12 +117,6 @@ var ProductModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Updates an existing product in the database.
-     * @param id The ID of the product to update.
-     * @param product The updated product data.
-     * @returns A Promise containing the updated product information.
-     */
     ProductModel.prototype.updateProduct = function (id, product) {
         return __awaiter(this, void 0, void 0, function () {
             var query, values, conn, result, error_4;
@@ -162,11 +142,6 @@ var ProductModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Deletes a product from the database.
-     * @param id The ID of the product to delete.
-     * @returns A Promise containing the deleted product information.
-     */
     ProductModel.prototype.deleteProduct = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var query, conn, result, error_5;

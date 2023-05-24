@@ -23,11 +23,6 @@ export type OrderedProducts = {
   total_amount: number;
 };
 export class OrderModel {
-  /**
-   * Create a new order for a user.
-   * @param userId The ID of the user.
-   * @returns A Promise containing the created order information.
-   */
   async createOrder(userId: number): Promise<Order | undefined> {
     try {
       const conn = await client.connect();
@@ -60,11 +55,6 @@ export class OrderModel {
     }
   }
 
-  /**
-   * Update the status of an order for a user.
-   * @param userId The ID of the user.
-   * @returns A Promise containing the updated order information.
-   */
   async updateStatus(
     userId: number,
     status: string,
@@ -106,11 +96,6 @@ export class OrderModel {
     }
   }
 
-  /**
-   * Get the active order for a user.
-   * @param userId The ID of the user.
-   * @returns A Promise containing the active order information.
-   */
   async getActiveOrder(userId: number): Promise<Order | undefined> {
     try {
       const conn = await client.connect();
@@ -136,11 +121,6 @@ export class OrderModel {
     }
   }
 
-  /**
-   * Get the completed orders for a user.
-   * @param userId The ID of the user.
-   * @returns A Promise containing an array of completed orders.
-   */
   async getCompletedOrders(userId: number): Promise<Order[] | undefined> {
     try {
       const conn = await client.connect();
@@ -162,13 +142,6 @@ export class OrderModel {
     }
   }
 
-  /**
-   * Add a product to the active order of a user.
-   * @param userId The ID of the user.
-   * @param productId The ID of the product.
-   * @param quantityInput The quantity of the product to add.
-   * @returns A Promise containing the details of the updated order.
-   */
   async addProductToOrder(
     userId: number,
     productId: number,
@@ -176,11 +149,7 @@ export class OrderModel {
   ): Promise<OrderDetails | undefined> {
     try {
       const conn = await client.connect();
-
-      // Start a transaction
       await conn.query('BEGIN');
-
-      // Check if there is an active order for the user
       const orderQuery =
         "SELECT id FROM orders WHERE user_id = $1 AND current_status = 'active' FOR UPDATE;";
       const orderResult = await conn.query(orderQuery, [userId]);
@@ -192,8 +161,6 @@ export class OrderModel {
         console.error(`There are no active orders for user ${userId}`);
         return undefined;
       }
-
-      // Check if the product already exists in order_details table
       const checkProductQuery =
         'SELECT * FROM order_details WHERE order_id = $1 AND product_id = $2;';
       const checkProductResult = await conn.query(checkProductQuery, [
@@ -202,7 +169,6 @@ export class OrderModel {
       ]);
 
       if (checkProductResult.rows.length > 0) {
-        // Product already exists, update the quantity
         const updateProductQuery =
           'UPDATE order_details SET quantity = $1 WHERE order_id = $2 AND product_id = $3 RETURNING *;';
         const updateResult = await conn.query(updateProductQuery, [
@@ -210,8 +176,6 @@ export class OrderModel {
           orderId,
           productId,
         ]);
-
-        // Commit the transaction
         await conn.query('COMMIT');
         conn.release();
 
@@ -223,7 +187,6 @@ export class OrderModel {
         ]);
         return resData as OrderDetails;
       } else {
-        // Product does not exist, insert a new entry
         const addProductQuery =
           'INSERT INTO order_details (product_id, quantity, order_id) VALUES ($1, $2, $3) RETURNING *;';
         const insertResult = await conn.query(addProductQuery, [
@@ -232,7 +195,6 @@ export class OrderModel {
           orderId,
         ]);
 
-        // Commit the transaction
         await conn.query('COMMIT');
         conn.release();
 
@@ -249,23 +211,13 @@ export class OrderModel {
     }
   }
 
-  /**
-   * Remove a product from the active order of a user.
-   * @param userId The ID of the user.
-   * @param productId The ID of the product.
-   * @returns A Promise containing the details of the updated order.
-   */
   async removeProductFromOrder(
     userId: number,
     productId: number,
   ): Promise<OrderDetails | undefined> {
     try {
       const conn = await client.connect();
-
-      // Start a transaction
       await conn.query('BEGIN');
-
-      // Check if there is an active order for the user
       const orderQuery =
         "SELECT id FROM orders WHERE user_id = $1 AND current_status = 'active' FOR UPDATE;";
       const orderResult = await conn.query(orderQuery, [userId]);
@@ -278,12 +230,9 @@ export class OrderModel {
         return undefined;
       }
 
-      // Delete the product from the order_details table
       const deleteProductQuery =
         'DELETE FROM order_details WHERE order_id = $1 AND product_id = $2 RETURNING *;';
       const result = await conn.query(deleteProductQuery, [orderId, productId]);
-
-      // Commit the transaction
       await conn.query('COMMIT');
       conn.release();
       const resData = _.pick(result.rows[0], [
@@ -300,11 +249,7 @@ export class OrderModel {
       );
     }
   }
-  /**
-   * Get all products that a user has ordered along with quantity and total amount.
-   * @param userId The ID of the user.
-   * @returns A Promise containing an array of products with quantity and total amount.
-   */
+
   async getOrderedProducts(userId: number): Promise<OrderedProducts[]> {
     try {
       const conn = await client.connect();
@@ -332,11 +277,6 @@ export class OrderModel {
     }
   }
 
-  /**
-   * Get the total amount for all orders of a user.
-   * @param userId The ID of the user.
-   * @returns A Promise containing the total amount of all orders.
-   */
   async getTotalAmountForAllOrders(userId: number): Promise<number> {
     try {
       const conn = await client.connect();

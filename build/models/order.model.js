@@ -45,11 +45,6 @@ var lodash_1 = __importDefault(require("lodash"));
 var OrderModel = /** @class */ (function () {
     function OrderModel() {
     }
-    /**
-     * Create a new order for a user.
-     * @param userId The ID of the user.
-     * @returns A Promise containing the created order information.
-     */
     OrderModel.prototype.createOrder = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             var conn, sql, result, resData, err_1;
@@ -84,11 +79,6 @@ var OrderModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Update the status of an order for a user.
-     * @param userId The ID of the user.
-     * @returns A Promise containing the updated order information.
-     */
     OrderModel.prototype.updateStatus = function (userId, status) {
         return __awaiter(this, void 0, void 0, function () {
             var conn, checkActiveQuery, checkActiveQueryRes, orderId, sql, result, resData, err_2;
@@ -131,11 +121,6 @@ var OrderModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Get the active order for a user.
-     * @param userId The ID of the user.
-     * @returns A Promise containing the active order information.
-     */
     OrderModel.prototype.getActiveOrder = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             var conn, sql, result, resData, err_3;
@@ -169,11 +154,6 @@ var OrderModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Get the completed orders for a user.
-     * @param userId The ID of the user.
-     * @returns A Promise containing an array of completed orders.
-     */
     OrderModel.prototype.getCompletedOrders = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             var conn, sql, result, orderList, err_4;
@@ -204,13 +184,6 @@ var OrderModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Add a product to the active order of a user.
-     * @param userId The ID of the user.
-     * @param productId The ID of the product.
-     * @param quantityInput The quantity of the product to add.
-     * @returns A Promise containing the details of the updated order.
-     */
     OrderModel.prototype.addProductToOrder = function (userId, productId, quantity) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
@@ -222,10 +195,8 @@ var OrderModel = /** @class */ (function () {
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _b.sent();
-                        // Start a transaction
                         return [4 /*yield*/, conn.query('BEGIN')];
                     case 2:
-                        // Start a transaction
                         _b.sent();
                         orderQuery = "SELECT id FROM orders WHERE user_id = $1 AND current_status = 'active' FOR UPDATE;";
                         return [4 /*yield*/, conn.query(orderQuery, [userId])];
@@ -256,10 +227,8 @@ var OrderModel = /** @class */ (function () {
                             ])];
                     case 7:
                         updateResult = _b.sent();
-                        // Commit the transaction
                         return [4 /*yield*/, conn.query('COMMIT')];
                     case 8:
-                        // Commit the transaction
                         _b.sent();
                         conn.release();
                         resData = lodash_1.default.pick(updateResult.rows[0], [
@@ -278,10 +247,8 @@ var OrderModel = /** @class */ (function () {
                             ])];
                     case 10:
                         insertResult = _b.sent();
-                        // Commit the transaction
                         return [4 /*yield*/, conn.query('COMMIT')];
                     case 11:
-                        // Commit the transaction
                         _b.sent();
                         conn.release();
                         resData = lodash_1.default.pick(insertResult.rows[0], [
@@ -300,12 +267,6 @@ var OrderModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Remove a product from the active order of a user.
-     * @param userId The ID of the user.
-     * @param productId The ID of the product.
-     * @returns A Promise containing the details of the updated order.
-     */
     OrderModel.prototype.removeProductFromOrder = function (userId, productId) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
@@ -317,10 +278,8 @@ var OrderModel = /** @class */ (function () {
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _b.sent();
-                        // Start a transaction
                         return [4 /*yield*/, conn.query('BEGIN')];
                     case 2:
-                        // Start a transaction
                         _b.sent();
                         orderQuery = "SELECT id FROM orders WHERE user_id = $1 AND current_status = 'active' FOR UPDATE;";
                         return [4 /*yield*/, conn.query(orderQuery, [userId])];
@@ -339,10 +298,8 @@ var OrderModel = /** @class */ (function () {
                         return [4 /*yield*/, conn.query(deleteProductQuery, [orderId, productId])];
                     case 6:
                         result = _b.sent();
-                        // Commit the transaction
                         return [4 /*yield*/, conn.query('COMMIT')];
                     case 7:
-                        // Commit the transaction
                         _b.sent();
                         conn.release();
                         resData = lodash_1.default.pick(result.rows[0], [
@@ -360,11 +317,6 @@ var OrderModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Get all products that a user has ordered along with quantity and total amount.
-     * @param userId The ID of the user.
-     * @returns A Promise containing an array of products with quantity and total amount.
-     */
     OrderModel.prototype.getOrderedProducts = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             var conn, sql, result, productList, err_7;
@@ -396,11 +348,6 @@ var OrderModel = /** @class */ (function () {
             });
         });
     };
-    /**
-     * Get the total amount for all orders of a user.
-     * @param userId The ID of the user.
-     * @returns A Promise containing the total amount of all orders.
-     */
     OrderModel.prototype.getTotalAmountForAllOrders = function (userId) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {

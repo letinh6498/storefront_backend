@@ -208,31 +208,6 @@ var login = function (req, res) { return __awaiter(void 0, void 0, void 0, funct
         }
     });
 }); };
-var refreshToken = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var refreshToken, result, err_8;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                refreshToken = req.body.refreshToken;
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
-                if (!refreshToken) {
-                    throw new Error('Missing refreshToken');
-                }
-                return [4 /*yield*/, userInstance.refreshToken(refreshToken)];
-            case 2:
-                result = _a.sent();
-                res.json(result);
-                return [3 /*break*/, 4];
-            case 3:
-                err_8 = _a.sent();
-                res.status(500).json({ err: err_8.message });
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); };
 var users_routes = function (app) {
     app.get('/users', verifyAuthToken_1.verifyAuthToken, getAllUser);
     app.post('/users', createUser);
@@ -241,6 +216,5 @@ var users_routes = function (app) {
     app.delete('/users/:id', verifyAuthToken_1.verifyAuthToken, deleteUser);
     app.post('/authenticate', authenticate);
     app.post('/login', login);
-    app.post('/refreshtoken', refreshToken);
 };
 exports.default = users_routes;

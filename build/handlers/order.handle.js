@@ -69,7 +69,6 @@ var updateStatusOrder = function (req, res) { return __awaiter(void 0, void 0, v
             case 0:
                 userId = req.params.userId;
                 status = req.body.status;
-                console.table({ userId: userId, status: status });
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
@@ -159,7 +158,6 @@ var removeProductFromOrder = function (req, res) { return __awaiter(void 0, void
         switch (_b.label) {
             case 0:
                 _a = req.params, userId = _a.userId, productId = _a.productId;
-                console.table({ userId: userId, productId: productId });
                 _b.label = 1;
             case 1:
                 _b.trys.push([1, 3, , 4]);

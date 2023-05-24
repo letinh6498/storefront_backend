@@ -94,19 +94,6 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
-const refreshToken = async (req: Request, res: Response) => {
-  const { refreshToken } = req.body;
-  try {
-    if (!refreshToken) {
-      throw new Error('Missing refreshToken');
-    }
-    const result = await userInstance.refreshToken(refreshToken as string);
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ err: (err as Error).message });
-  }
-};
-
 const users_routes = (app: express.Application) => {
   app.get('/users', verifyAuthToken, getAllUser);
   app.post('/users', createUser);
@@ -115,7 +102,6 @@ const users_routes = (app: express.Application) => {
   app.delete('/users/:id', verifyAuthToken, deleteUser);
   app.post('/authenticate', authenticate);
   app.post('/login', login);
-  app.post('/refreshtoken', refreshToken);
 };
 
 export default users_routes;

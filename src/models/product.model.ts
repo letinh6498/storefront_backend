@@ -8,10 +8,6 @@ export type Product = {
 };
 
 export class ProductModel {
-  /**
-   * Retrieves all products from the database.
-   * @returns A Promise containing an array of all products.
-   */
   async getAllProducts(): Promise<Product[] | undefined> {
     try {
       const conn = await client.connect();
@@ -24,11 +20,6 @@ export class ProductModel {
     }
   }
 
-  /**
-   * Retrieves a product by its ID from the database.
-   * @param id The ID of the product to retrieve.
-   * @returns A Promise containing the product information.
-   */
   async getProductById(id: string): Promise<Product | undefined> {
     try {
       const query = 'SELECT * FROM products WHERE id = $1';
@@ -41,11 +32,6 @@ export class ProductModel {
     }
   }
 
-  /**
-   * Creates a new product in the database.
-   * @param product The product data to be created.
-   * @returns A Promise containing the created product information.
-   */
   async createProduct(product: Product): Promise<Product | undefined> {
     try {
       const query =
@@ -60,12 +46,6 @@ export class ProductModel {
     }
   }
 
-  /**
-   * Updates an existing product in the database.
-   * @param id The ID of the product to update.
-   * @param product The updated product data.
-   * @returns A Promise containing the updated product information.
-   */
   async updateProduct(
     id: number,
     product: Product,
@@ -83,11 +63,6 @@ export class ProductModel {
     }
   }
 
-  /**
-   * Deletes a product from the database.
-   * @param id The ID of the product to delete.
-   * @returns A Promise containing the deleted product information.
-   */
   async deleteProduct(id: number): Promise<Product | undefined> {
     try {
       const query = 'DELETE FROM products WHERE id = $1 RETURNING *';

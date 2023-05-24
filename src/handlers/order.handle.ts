@@ -18,7 +18,6 @@ const createOrder = async (req: Request, res: Response) => {
 const updateStatusOrder = async (req: Request, res: Response) => {
   const { userId } = req.params;
   const { status } = req.body;
-  console.table({ userId, status });
   try {
     const updatedOrder = await orderInstance.updateStatus(+userId, status);
     res.json(updatedOrder);
@@ -63,7 +62,6 @@ const addProductToOrder = async (req: Request, res: Response) => {
 };
 const removeProductFromOrder = async (req: Request, res: Response) => {
   const { userId, productId } = req.params;
-  console.table({ userId, productId });
   try {
     const updatedOrder = await orderInstance.removeProductFromOrder(
       +userId,

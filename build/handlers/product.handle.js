@@ -52,7 +52,7 @@ var getAllProduct = function (req, res) { return __awaiter(void 0, void 0, void 
                 return [3 /*break*/, 3];
             case 2:
                 err_1 = _a.sent();
-                res.status(500).json({ error: 'Failed to fetch products.' });
+                res.status(400).json({ error: err_1.message });
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -79,7 +79,7 @@ var getProductById = function (req, res) { return __awaiter(void 0, void 0, void
                 return [3 /*break*/, 4];
             case 3:
                 err_2 = _a.sent();
-                res.status(500).json({ error: 'Failed to fetch product.' });
+                res.status(400).json({ error: err_2.message });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -102,7 +102,7 @@ var createProduct = function (req, res) { return __awaiter(void 0, void 0, void 
                 return [3 /*break*/, 4];
             case 3:
                 err_3 = _b.sent();
-                res.status(500).json({ error: 'Failed to create product.' });
+                res.status(400).json({ error: err_3.message });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -129,7 +129,7 @@ var deleteProduct = function (req, res) { return __awaiter(void 0, void 0, void 
                 return [3 /*break*/, 4];
             case 3:
                 err_4 = _a.sent();
-                res.status(500).json({ error: 'Failed to delete product.' });
+                res.status(400).json({ error: err_4.message });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -158,7 +158,7 @@ var updateProduct = function (req, res) { return __awaiter(void 0, void 0, void 
                 return [3 /*break*/, 4];
             case 3:
                 err_5 = _b.sent();
-                res.status(500).json({ error: 'Failed to update product.' });
+                res.status(400).json({ error: err_5.message });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
