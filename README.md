@@ -46,3 +46,6 @@ docker-compose up
 
 
 The project will start and you can access it at [http://localhost:3000].
+
+## Requirements
+Check the "REQUIREMENTS.md" file to see the details.

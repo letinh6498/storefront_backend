@@ -1,3 +1,29 @@
+## API Endpoints
+#### Products
+- GetAllProduct [token required] : `'/products' [GET]`
+- AddNewProduct (args: name, description, price) [token required] : `'/products' [POST]`
+- GetProductById (args: productid) [token required] : `'/products/:id' [GET]`
+- GetAllProduct (args: productid,  name, description, price) [token required] : `'/products/:id' [PUT]`
+- GetAllProduct (args: productid) [token required] : `'/products/:id' [DELETE]`
+
+#### Users
+
+- GetAllUser [token required] : `'/users' [GET]`
+- AddNewUser (args: username,email,firstname, lastname, password) : `'/users' [POST]`
+- GetUserById (args: userid) [token required] : `'/users/:id' [GET]`
+- UpdateUser (args: userid, username,email,firstname, lastname, password) [token required] : `'/users/:id' [PUT]`
+- DeleteUser (args: userid) [token required] : `'/users/:id' [DELETE]`
+- Login (args: username, password) [token required] : `'/login' [POST]`
+- Authenticate (args: username, password) [token required] : `'/authenticate' [POST]`
+
+
+#### Orders
+- AddNewOrder (args: userid) [token required] : `'/orders' [POST]`
+- UpdateStatus (args: userid) [token required] : `'/orders/users/:userId' [POST]`
+- GetCompeleteOrder (args: userid) [token required] : `'/orders/users/:userId/completed' [GET]`
+- GetActiveOrder (args: userid) [token required] : `'/orders/users/:userId/active' [GET]`
+- AddProductToOrder (args: userid, productid) [token required] : `'/orders/users/:userId/products' [POST]`
+- RemoveProductFromOrder (args: userid, productid) [token required] : `'/orders/users/:userId/products/:productId' [DELETE]`
 
 
 ## Data Shapes
