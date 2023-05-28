@@ -2,7 +2,7 @@ import client from '../database';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import * as jwt from 'jsonwebtoken';
-
+import _ from 'lodash';
 dotenv.config();
 
 export type User = {
@@ -12,6 +12,13 @@ export type User = {
   last_name: string;
   email: string;
   password: string;
+};
+export type UserReturn = {
+  id?: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  email: string;
 };
 
 export interface DecodedToken {
@@ -23,7 +30,7 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET as string;
 const SALT_ROUNDS = 10;
 
 export class UserModel {
-  async createUser(user: User): Promise<User> {
+  async createUser(user: User): Promise<UserReturn> {
     try {
       const query = `INSERT INTO users (username, email, password, first_name, last_name)
                         SELECT $1, $2, $3, $4, $5
@@ -43,7 +50,14 @@ export class UserModel {
       ];
       const { rows } = await conn.query(query, values);
       conn.release();
-      return rows[0];
+      const returnData = _.pick(rows[0], [
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
+      ]);
+      return returnData as UserReturn;
     } catch (error) {
       throw new Error(
         `Failed to create user ${user.username}. Error: ${error}`,
@@ -51,31 +65,45 @@ export class UserModel {
     }
   }
 
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<UserReturn[]> {
     try {
       const conn = await client.connect();
       const query = 'SELECT * FROM users';
-      const result = await conn.query(query);
+      const { rows } = await conn.query(query);
       conn.release();
-      return result.rows;
+      const userList: UserReturn[] = rows.map((row) => ({
+        id: row.id,
+        email: row.email,
+        username: row.username,
+        first_name: row.first_name,
+        last_name: row.last_name,
+      }));
+      return userList;
     } catch (error) {
       throw new Error(`Failed to retrieve users. Error: ${error}`);
     }
   }
 
-  async getUserById(id: number): Promise<User> {
+  async getUserById(id: number): Promise<UserReturn> {
     try {
       const query = 'SELECT * FROM users WHERE id = $1';
       const conn = await client.connect();
-      const result = await conn.query(query, [id]);
+      const { rows } = await conn.query(query, [id]);
       conn.release();
-      return result.rows[0];
+      const returnData: UserReturn = _.pick(rows[0], [
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
+      ]);
+      return returnData;
     } catch (error) {
       throw new Error(`Failed to retrieve user ${id}. Error: ${error}`);
     }
   }
 
-  async updateUser(id: number, user: User): Promise<User> {
+  async updateUser(id: number, user: User): Promise<UserReturn> {
     try {
       const query = `UPDATE users SET username = $1, 
                                       email = $2, 
@@ -96,7 +124,14 @@ export class UserModel {
       const conn = await client.connect();
       const { rows } = await conn.query(query, values);
       conn.release();
-      return rows[0];
+      const returnData: UserReturn = _.pick(rows[0], [
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
+      ]);
+      return returnData;
     } catch (error) {
       throw new Error(
         `Failed to update user ${user.username}. Error: ${error}`,
@@ -104,20 +139,29 @@ export class UserModel {
     }
   }
 
-  async deleteUser(id: number): Promise<User> {
+  async deleteUser(id: number): Promise<UserReturn> {
     try {
-      const query = 'DELETE FROM users WHERE id = $1';
+      const query = 'DELETE FROM users WHERE id = $1 RETURNING *';
       const conn = await client.connect();
-      const result = await conn.query(query, [id]);
-      const rows = result.rows[0];
+      const { rows } = await conn.query(query, [id]);
       conn.release();
-      return rows;
+      const returnData: UserReturn = _.pick(rows[0], [
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'username',
+      ]);
+      return returnData;
     } catch (error) {
       throw new Error(`Failed to delete user ${id}. Error: ${error}`);
     }
   }
 
-  async authenticate(username: string, password: string): Promise<User | null> {
+  async authenticate(
+    username: string,
+    password: string,
+  ): Promise<UserReturn | null> {
     const conn = await client.connect();
     const sql = 'SELECT * FROM users WHERE username = $1';
     const result = await conn.query(sql, [username]);
@@ -125,7 +169,13 @@ export class UserModel {
     if (result.rows.length) {
       const user = result.rows[0];
       if (bcrypt.compareSync(password + PEPPER, user.password)) {
-        return user;
+        return _.pick(user, [
+          'id',
+          'email',
+          'first_name',
+          'last_name',
+          'username',
+        ]);
       }
     }
     return null;

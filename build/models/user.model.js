@@ -67,6 +67,7 @@ var database_1 = __importDefault(require("../database"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var dotenv_1 = __importDefault(require("dotenv"));
 var jwt = __importStar(require("jsonwebtoken"));
+var lodash_1 = __importDefault(require("lodash"));
 dotenv_1.default.config();
 var PEPPER = process.env.PEPPER;
 var TOKEN_SECRET = process.env.TOKEN_SECRET;
@@ -76,7 +77,7 @@ var UserModel = /** @class */ (function () {
     }
     UserModel.prototype.createUser = function (user) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, conn, salt, passwordHash, values, rows, error_1;
+            var query, conn, salt, passwordHash, values, rows, returnData, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -99,7 +100,14 @@ var UserModel = /** @class */ (function () {
                     case 2:
                         rows = (_a.sent()).rows;
                         conn.release();
-                        return [2 /*return*/, rows[0]];
+                        returnData = lodash_1.default.pick(rows[0], [
+                            'id',
+                            'email',
+                            'first_name',
+                            'last_name',
+                            'username',
+                        ]);
+                        return [2 /*return*/, returnData];
                     case 3:
                         error_1 = _a.sent();
                         throw new Error("Failed to create user ".concat(user.username, ". Error: ").concat(error_1));
@@ -110,7 +118,7 @@ var UserModel = /** @class */ (function () {
     };
     UserModel.prototype.getAllUsers = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var conn, query, result, error_2;
+            var conn, query, rows, userList, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -121,9 +129,16 @@ var UserModel = /** @class */ (function () {
                         query = 'SELECT * FROM users';
                         return [4 /*yield*/, conn.query(query)];
                     case 2:
-                        result = _a.sent();
+                        rows = (_a.sent()).rows;
                         conn.release();
-                        return [2 /*return*/, result.rows];
+                        userList = rows.map(function (row) { return ({
+                            id: row.id,
+                            email: row.email,
+                            username: row.username,
+                            first_name: row.first_name,
+                            last_name: row.last_name,
+                        }); });
+                        return [2 /*return*/, userList];
                     case 3:
                         error_2 = _a.sent();
                         throw new Error("Failed to retrieve users. Error: ".concat(error_2));
@@ -134,7 +149,7 @@ var UserModel = /** @class */ (function () {
     };
     UserModel.prototype.getUserById = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, conn, result, error_3;
+            var query, conn, rows, returnData, error_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -145,9 +160,16 @@ var UserModel = /** @class */ (function () {
                         conn = _a.sent();
                         return [4 /*yield*/, conn.query(query, [id])];
                     case 2:
-                        result = _a.sent();
+                        rows = (_a.sent()).rows;
                         conn.release();
-                        return [2 /*return*/, result.rows[0]];
+                        returnData = lodash_1.default.pick(rows[0], [
+                            'id',
+                            'email',
+                            'first_name',
+                            'last_name',
+                            'username',
+                        ]);
+                        return [2 /*return*/, returnData];
                     case 3:
                         error_3 = _a.sent();
                         throw new Error("Failed to retrieve user ".concat(id, ". Error: ").concat(error_3));
@@ -158,7 +180,7 @@ var UserModel = /** @class */ (function () {
     };
     UserModel.prototype.updateUser = function (id, user) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, salt, passwordHash, values, conn, rows, error_4;
+            var query, salt, passwordHash, values, conn, rows, returnData, error_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -181,7 +203,14 @@ var UserModel = /** @class */ (function () {
                     case 2:
                         rows = (_a.sent()).rows;
                         conn.release();
-                        return [2 /*return*/, rows[0]];
+                        returnData = lodash_1.default.pick(rows[0], [
+                            'id',
+                            'email',
+                            'first_name',
+                            'last_name',
+                            'username',
+                        ]);
+                        return [2 /*return*/, returnData];
                     case 3:
                         error_4 = _a.sent();
                         throw new Error("Failed to update user ".concat(user.username, ". Error: ").concat(error_4));
@@ -192,21 +221,27 @@ var UserModel = /** @class */ (function () {
     };
     UserModel.prototype.deleteUser = function (id) {
         return __awaiter(this, void 0, void 0, function () {
-            var query, conn, result, rows, error_5;
+            var query, conn, rows, returnData, error_5;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        query = 'DELETE FROM users WHERE id = $1';
+                        query = 'DELETE FROM users WHERE id = $1 RETURNING *';
                         return [4 /*yield*/, database_1.default.connect()];
                     case 1:
                         conn = _a.sent();
                         return [4 /*yield*/, conn.query(query, [id])];
                     case 2:
-                        result = _a.sent();
-                        rows = result.rows[0];
+                        rows = (_a.sent()).rows;
                         conn.release();
-                        return [2 /*return*/, rows];
+                        returnData = lodash_1.default.pick(rows[0], [
+                            'id',
+                            'email',
+                            'first_name',
+                            'last_name',
+                            'username',
+                        ]);
+                        return [2 /*return*/, returnData];
                     case 3:
                         error_5 = _a.sent();
                         throw new Error("Failed to delete user ".concat(id, ". Error: ").concat(error_5));
@@ -230,7 +265,13 @@ var UserModel = /** @class */ (function () {
                         if (result.rows.length) {
                             user = result.rows[0];
                             if (bcrypt_1.default.compareSync(password + PEPPER, user.password)) {
-                                return [2 /*return*/, user];
+                                return [2 /*return*/, lodash_1.default.pick(user, [
+                                        'id',
+                                        'email',
+                                        'first_name',
+                                        'last_name',
+                                        'username',
+                                    ])];
                             }
                         }
                         return [2 /*return*/, null];

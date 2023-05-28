@@ -79,7 +79,7 @@ var OrderModel = /** @class */ (function () {
             });
         });
     };
-    OrderModel.prototype.updateStatus = function (userId, status) {
+    OrderModel.prototype.updateStatus = function (userId) {
         return __awaiter(this, void 0, void 0, function () {
             var conn, checkActiveQuery, checkActiveQueryRes, orderId, sql, result, resData, err_2;
             return __generator(this, function (_a) {
@@ -92,7 +92,7 @@ var OrderModel = /** @class */ (function () {
                         checkActiveQuery = 'SELECT id FROM orders WHERE user_id = $1 AND current_status = $2;';
                         return [4 /*yield*/, conn.query(checkActiveQuery, [
                                 userId,
-                                status,
+                                'active',
                             ])];
                     case 2:
                         checkActiveQueryRes = _a.sent();
@@ -313,63 +313,6 @@ var OrderModel = /** @class */ (function () {
                         err_6 = _b.sent();
                         throw new Error("Could not delete product ".concat(productId, " from order: ").concat(err_6));
                     case 9: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    OrderModel.prototype.getOrderedProducts = function (userId) {
-        return __awaiter(this, void 0, void 0, function () {
-            var conn, sql, result, productList, err_7;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        _a.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, database_1.default.connect()];
-                    case 1:
-                        conn = _a.sent();
-                        sql = "\n        SELECT p.id AS product_id, p.name AS product_name, od.quantity, p.price, (od.quantity * p.price) AS total_amount\n        FROM orders o\n        JOIN order_details od ON o.id = od.order_id\n        JOIN products p ON p.id = od.product_id\n        WHERE o.user_id = $1;\n      ";
-                        return [4 /*yield*/, conn.query(sql, [userId])];
-                    case 2:
-                        result = _a.sent();
-                        conn.release();
-                        productList = result.rows.map(function (row) { return ({
-                            product_id: row.product_id,
-                            product_name: row.product_name,
-                            quantity: row.quantity,
-                            price: row.price,
-                            total_amount: row.total_amount,
-                        }); });
-                        return [2 /*return*/, productList];
-                    case 3:
-                        err_7 = _a.sent();
-                        throw new Error("Failed to retrieve ordered products: ".concat(err_7));
-                    case 4: return [2 /*return*/];
-                }
-            });
-        });
-    };
-    OrderModel.prototype.getTotalAmountForAllOrders = function (userId) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function () {
-            var conn, sql, result, totalAmount, err_8;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _b.trys.push([0, 3, , 4]);
-                        return [4 /*yield*/, database_1.default.connect()];
-                    case 1:
-                        conn = _b.sent();
-                        sql = "\n        SELECT SUM(od.quantity * p.price) AS total_amount\n        FROM orders o\n        JOIN order_details od ON o.id = od.order_id\n        JOIN products p ON p.id = od.product_id\n        WHERE o.user_id = $1;\n      ";
-                        return [4 /*yield*/, conn.query(sql, [userId])];
-                    case 2:
-                        result = _b.sent();
-                        conn.release();
-                        totalAmount = ((_a = result.rows[0]) === null || _a === void 0 ? void 0 : _a.total_amount) || 0;
-                        return [2 /*return*/, totalAmount];
-                    case 3:
-                        err_8 = _b.sent();
-                        throw new Error("Failed to retrieve total amount for all orders: ".concat(err_8));
-                    case 4: return [2 /*return*/];
                 }
             });
         });

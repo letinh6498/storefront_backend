@@ -20,5 +20,3 @@ jasmine.getEnv().addReporter(
     customProcessors: [CustomProcessor],
   }),
 );
-
-// "test": "ENV=test db-migrate --env test up && jasmine-ts && db-migrate db:drop test"

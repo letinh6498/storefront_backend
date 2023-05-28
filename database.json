@@ -9,7 +9,7 @@
     "test": {
       "driver": "pg",
       "host": "127.0.0.1",
-      "database": "fantasy_worlds",
+      "database": "fantasy_worlds_test",
       "user": "postgres",
       "password": "password"
     }

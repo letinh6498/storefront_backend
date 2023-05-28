@@ -1,5 +1,5 @@
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTY4NDY3ODA5NCwiZXhwIjoxNjg0Njc4OTk0fQ.gZTfgCDHMEFyGtvk3bAQpEY1uAYk8Cp84maKsqlHn4U
-@refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTY4NDY3ODA5NCwiZXhwIjoxNjg1MjgyODk0fQ.MKw2djexc59es9YLNtgKxjbLXxMIoJg0p6rpLT0Tz1c
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4NTI2OTU3NCwiZXhwIjoxNjg1MjcwNDc0fQ.HDe46QnoithA8hEcrwsHZZ48aCIqUj9DAOUc01_upsY
+
 @url=http://localhost:3000
 ###
 ### Get All Users
@@ -87,10 +87,3 @@ Content-Type: application/json
 ###
 ### Refresh Token
 ###
-
-POST {{url}}/refreshtoken
-Content-Type: application/json
-
-{
-  "refreshToken": "{{refreshToken}}"
-}

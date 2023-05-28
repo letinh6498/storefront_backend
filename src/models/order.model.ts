@@ -55,17 +55,14 @@ export class OrderModel {
     }
   }
 
-  async updateStatus(
-    userId: number,
-    status: string,
-  ): Promise<Order | undefined> {
+  async updateStatus(userId: number): Promise<Order | undefined> {
     try {
       const conn = await client.connect();
       const checkActiveQuery =
         'SELECT id FROM orders WHERE user_id = $1 AND current_status = $2;';
       const checkActiveQueryRes = await conn.query(checkActiveQuery, [
         userId,
-        status,
+        'active',
       ]);
 
       if (!checkActiveQueryRes.rows[0]) {
@@ -247,54 +244,6 @@ export class OrderModel {
       throw new Error(
         `Could not delete product ${productId} from order: ${err}`,
       );
-    }
-  }
-
-  async getOrderedProducts(userId: number): Promise<OrderedProducts[]> {
-    try {
-      const conn = await client.connect();
-      const sql = `
-        SELECT p.id AS product_id, p.name AS product_name, od.quantity, p.price, (od.quantity * p.price) AS total_amount
-        FROM orders o
-        JOIN order_details od ON o.id = od.order_id
-        JOIN products p ON p.id = od.product_id
-        WHERE o.user_id = $1;
-      `;
-      const result = await conn.query(sql, [userId]);
-      conn.release();
-
-      const productList: OrderedProducts[] = result.rows.map((row) => ({
-        product_id: row.product_id,
-        product_name: row.product_name,
-        quantity: row.quantity,
-        price: row.price,
-        total_amount: row.total_amount,
-      }));
-
-      return productList;
-    } catch (err) {
-      throw new Error(`Failed to retrieve ordered products: ${err}`);
-    }
-  }
-
-  async getTotalAmountForAllOrders(userId: number): Promise<number> {
-    try {
-      const conn = await client.connect();
-      const sql = `
-        SELECT SUM(od.quantity * p.price) AS total_amount
-        FROM orders o
-        JOIN order_details od ON o.id = od.order_id
-        JOIN products p ON p.id = od.product_id
-        WHERE o.user_id = $1;
-      `;
-      const result = await conn.query(sql, [userId]);
-      conn.release();
-
-      const totalAmount: number = result.rows[0]?.total_amount || 0;
-
-      return totalAmount;
-    } catch (err) {
-      throw new Error(`Failed to retrieve total amount for all orders: ${err}`);
     }
   }
 }

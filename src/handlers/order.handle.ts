@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Order, OrderModel, OrderDetails } from '../models/order.model';
+import { OrderModel } from '../models/order.model';
 import { verifyAuthToken } from '../middleware/verifyAuthToken';
 
 const orderInstance = new OrderModel();
@@ -17,9 +17,8 @@ const createOrder = async (req: Request, res: Response) => {
 
 const updateStatusOrder = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  const { status } = req.body;
   try {
-    const updatedOrder = await orderInstance.updateStatus(+userId, status);
+    const updatedOrder = await orderInstance.updateStatus(+userId);
     res.json(updatedOrder);
   } catch (err: unknown) {
     res.status(400).json({ error: (err as Error).message });
@@ -73,45 +72,22 @@ const removeProductFromOrder = async (req: Request, res: Response) => {
   }
 };
 
-const getOrderedProducts = async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  try {
-    const orderedProducts = await orderInstance.getOrderedProducts(+userId);
-    res.json(orderedProducts);
-  } catch (err: unknown) {
-    res.status(400).json({ error: (err as Error).message });
-  }
-};
-
-const getTotalAmountForAllOrders = async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  try {
-    const totalAmountForAllOrders =
-      await orderInstance.getTotalAmountForAllOrders(+userId);
-    res.json(totalAmountForAllOrders);
-  } catch (err: unknown) {
-    res.status(400).json({ error: (err as Error).message });
-  }
-};
-
 const order_routes = (app: express.Application) => {
   app.post('/orders', verifyAuthToken, createOrder);
-  app.put('/orders/:userId', verifyAuthToken, updateStatusOrder);
-  app.get('/orders/:userId/active', verifyAuthToken, getActiveOrder);
-  app.get('/orders/:userId/completed', verifyAuthToken, getCompeleteOrder);
+  app.put('/orders/users/:userId', verifyAuthToken, updateStatusOrder);
+  app.get('/orders/users/:userId/active', verifyAuthToken, getActiveOrder);
   app.get(
-    '/orders/:userId/orderedProducts',
+    '/orders/users/:userId/completed',
     verifyAuthToken,
-    getOrderedProducts,
+    getCompeleteOrder,
   );
-  app.get(
-    '/orders/:userId/totalAmountForAllOrders',
+  app.post(
+    '/orders/users/:userId/products',
     verifyAuthToken,
-    getTotalAmountForAllOrders,
+    addProductToOrder,
   );
-  app.post('/orders/:userId/products', verifyAuthToken, addProductToOrder);
   app.delete(
-    '/orders/:userId/products/:productId',
+    '/orders/users/:userId/products/:productId',
     verifyAuthToken,
     removeProductFromOrder,
   );

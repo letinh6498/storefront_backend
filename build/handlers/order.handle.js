@@ -63,16 +63,15 @@ var createOrder = function (req, res) { return __awaiter(void 0, void 0, void 0,
     });
 }); };
 var updateStatusOrder = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, status, updatedOrder, err_2;
+    var userId, updatedOrder, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 userId = req.params.userId;
-                status = req.body.status;
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, orderInstance.updateStatus(+userId, status)];
+                return [4 /*yield*/, orderInstance.updateStatus(+userId)];
             case 2:
                 updatedOrder = _a.sent();
                 res.json(updatedOrder);
@@ -174,58 +173,12 @@ var removeProductFromOrder = function (req, res) { return __awaiter(void 0, void
         }
     });
 }); };
-var getOrderedProducts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, orderedProducts, err_7;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                userId = req.params.userId;
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, orderInstance.getOrderedProducts(+userId)];
-            case 2:
-                orderedProducts = _a.sent();
-                res.json(orderedProducts);
-                return [3 /*break*/, 4];
-            case 3:
-                err_7 = _a.sent();
-                res.status(400).json({ error: err_7.message });
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); };
-var getTotalAmountForAllOrders = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, totalAmountForAllOrders, err_8;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                userId = req.params.userId;
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, orderInstance.getTotalAmountForAllOrders(+userId)];
-            case 2:
-                totalAmountForAllOrders = _a.sent();
-                res.json(totalAmountForAllOrders);
-                return [3 /*break*/, 4];
-            case 3:
-                err_8 = _a.sent();
-                res.status(400).json({ error: err_8.message });
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); };
 var order_routes = function (app) {
     app.post('/orders', verifyAuthToken_1.verifyAuthToken, createOrder);
-    app.put('/orders/:userId', verifyAuthToken_1.verifyAuthToken, updateStatusOrder);
-    app.get('/orders/:userId/active', verifyAuthToken_1.verifyAuthToken, getActiveOrder);
-    app.get('/orders/:userId/completed', verifyAuthToken_1.verifyAuthToken, getCompeleteOrder);
-    app.get('/orders/:userId/orderedProducts', verifyAuthToken_1.verifyAuthToken, getOrderedProducts);
-    app.get('/orders/:userId/totalAmountForAllOrders', verifyAuthToken_1.verifyAuthToken, getTotalAmountForAllOrders);
-    app.post('/orders/:userId/products', verifyAuthToken_1.verifyAuthToken, addProductToOrder);
-    app.delete('/orders/:userId/products/:productId', verifyAuthToken_1.verifyAuthToken, removeProductFromOrder);
+    app.put('/orders/users/:userId', verifyAuthToken_1.verifyAuthToken, updateStatusOrder);
+    app.get('/orders/users/:userId/active', verifyAuthToken_1.verifyAuthToken, getActiveOrder);
+    app.get('/orders/users/:userId/completed', verifyAuthToken_1.verifyAuthToken, getCompeleteOrder);
+    app.post('/orders/users/:userId/products', verifyAuthToken_1.verifyAuthToken, addProductToOrder);
+    app.delete('/orders/users/:userId/products/:productId', verifyAuthToken_1.verifyAuthToken, removeProductFromOrder);
 };
 exports.default = order_routes;

@@ -1,4 +1,4 @@
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4NDkzNDI3NSwiZXhwIjoxNjg0OTM1MTc1fQ.n9PlfjLobV3vwMkPvEiMGMbig7PLFj6NA-BQbH2Gw6w
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4NTI2OTU3NCwiZXhwIjoxNjg1MjcwNDc0fQ.HDe46QnoithA8hEcrwsHZZ48aCIqUj9DAOUc01_upsY
 @url=http://localhost:3000
 ###
 ### Get All Products
@@ -25,9 +25,9 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "name": "Product 1",
+  "name": "Product 2",
   "description": "cái gì gì đây 1",
-  "price": 10.99
+  "price": 1099
 }
 
 
