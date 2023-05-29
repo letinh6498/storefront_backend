@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var product_model_1 = require("../models/product.model");
 var verifyAuthToken_1 = require("../middleware/verifyAuthToken");
 var productInstance = new product_model_1.ProductModel();
-var getAllProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+var getAllProducts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var products, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -165,7 +165,7 @@ var updateProduct = function (req, res) { return __awaiter(void 0, void 0, void 
     });
 }); };
 var product_routes = function (app) {
-    app.get('/products', verifyAuthToken_1.verifyAuthToken, getAllProduct);
+    app.get('/products', verifyAuthToken_1.verifyAuthToken, getAllProducts);
     app.post('/products', verifyAuthToken_1.verifyAuthToken, createProduct);
     app.get('/products/:id', verifyAuthToken_1.verifyAuthToken, getProductById);
     app.put('/products/:id', verifyAuthToken_1.verifyAuthToken, updateProduct);
