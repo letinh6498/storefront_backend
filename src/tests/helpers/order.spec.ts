@@ -11,7 +11,7 @@ const request = supertest(base_url);
 
 const orderInstance = new OrderModel();
 
-describe('Order model', () => {
+fdescribe('Order model', () => {
   it('has an create method', () => {
     expect(orderInstance.createOrder).toBeDefined();
   });
@@ -68,15 +68,15 @@ fdescribe('Orders Handler', () => {
     expect(response.body.current_status).toEqual('active');
   });
 
-  xit('should change status of user order', async () => {
-    const response = await request
-      .put(`/orders/users/${1}/`)
-      .set('Authorization', token);
-    expect(response.status).toBe(200);
-    expect(response.body.id).toEqual(1);
-    expect(response.body.user_id).toEqual(1);
-    expect(response.body.current_status).toEqual('complete');
-  });
+  // it('should change status of user order', async () => {
+  //   const response = await request
+  //     .put(`/orders/users/${1}/`)
+  //     .set('Authorization', token);
+  //   expect(response.status).toBe(200);
+  //   expect(response.body.id).toEqual(1);
+  //   expect(response.body.user_id).toEqual(1);
+  //   expect(response.body.current_status).toEqual('complete');
+  // });
 
   fit('should add product to order details', async () => {
     const response = await request
@@ -103,20 +103,20 @@ fdescribe('Orders Handler', () => {
     expect(response.body.quantity).toEqual(2);
   });
 
-  xit('should get complete order', async () => {
-    const response = await request
-      .get(`/orders/users/${1}/completed`)
-      .set('Authorization', token);
+  // it('should get complete order', async () => {
+  //   const response = await request
+  //     .get(`/orders/users/${1}/completed`)
+  //     .set('Authorization', token);
 
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual([
-      jasmine.objectContaining({
-        id: 1,
-        user_id: 1,
-        current_status: 'complete',
-      }),
-    ]);
-  });
+  //   expect(response.status).toBe(200);
+  //   expect(response.body).toEqual([
+  //     jasmine.objectContaining({
+  //       id: 1,
+  //       user_id: 1,
+  //       current_status: 'complete',
+  //     }),
+  //   ]);
+  // });
 
   afterAll(async () => {
     await prepareDB();

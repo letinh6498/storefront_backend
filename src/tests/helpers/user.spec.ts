@@ -62,7 +62,7 @@ const userPost = {
   last_name: 'last name create',
 };
 let token: string;
-describe('User model', () => {
+fdescribe('User model', () => {
   it('has an create method', () => {
     expect(userInstance.createUser).toBeDefined();
   });

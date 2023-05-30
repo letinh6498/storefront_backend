@@ -70,7 +70,7 @@ Check the "REQUIREMENTS.md" file to see the details.
 create file .env file and copy content to file
 POSTGRES_HOST = 127.0.0.1
 POSTGRES_DB = fantasy_worlds
-POSTGRES_DB_TEST = fantasy_worlds_test
+POSTGRES_DB_DEV = fantasy_worlds_dev
 POSTGRES_USER = postgres
 POSTGRES_PASS = password
 ENV = test
@@ -83,17 +83,17 @@ PORT = 3000
 
 create file database.json file and copy content to file
 {
-    "dev": {
+    "prod": {
       "driver": "pg",
       "host": "127.0.0.1",
       "database": "fantasy_worlds",
       "user": "postgres",
       "password": "password"
     },
-    "test": {
+    "dev": {
       "driver": "pg",
       "host": "127.0.0.1",
-      "database": "fantasy_worlds_test",
+      "database": "fantasy_worlds_dev",
       "user": "postgres",
       "password": "password"
     }

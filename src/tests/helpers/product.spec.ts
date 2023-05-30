@@ -51,7 +51,7 @@ const productPost = {
 
 let productId: number;
 
-describe('Product model', () => {
+fdescribe('Product model', () => {
   it('has an create method', () => {
     expect(productInstance.createProduct).toBeDefined();
   });

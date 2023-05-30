@@ -11,8 +11,7 @@
     "start": "node src/service.ts",
     "tsc": "tsc",
     "test-ts": "jasmine-ts",
-    "watch": "tsc-watch --esModuleInterop src/server.ts --outDir .dist --onSuccess \"node ./dist/server.js\"",
-    "test": "npx tsc && db-migrate --env test up && jasmine -- && db-migrate reset -env test"
+    "test": "npx tsc && db-migrate --env dev up && jasmine -- && db-migrate reset -env dev"
   },
   "keywords": [],
   "author": "",
