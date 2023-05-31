@@ -42,17 +42,20 @@ nodemon
 ## docker compose file
 create file docker compose.yml file and copy content to file
 version: '3.8'
+
 services:
-  db:
-    image: postgres:latest
-    environment:
-      POSTGRES_PASSWORD: password
-    ports:
-    - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: fantasy_worlds_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
 volumes:
-  db_data:
+  db_data:
 
 ## Running docker compose
 To run the project, run the following commands:
@@ -83,18 +86,18 @@ PORT = 3000
 
 create file database.json file and copy content to file
 {
-    "prod": {
-      "driver": "pg",
-      "host": "127.0.0.1",
-      "database": "fantasy_worlds",
-      "user": "postgres",
-      "password": "password"
-    },
-    "dev": {
-      "driver": "pg",
-      "host": "127.0.0.1",
-      "database": "fantasy_worlds_dev",
-      "user": "postgres",
-      "password": "password"
-    }
+  "dev": {
+    "driver": "pg",
+    "host": "127.0.0.1",
+    "database": "fantasy_worlds_dev",
+    "user": "postgres",
+    "password": "password"
+  },
+  "prod": {
+    "driver": "pg",
+    "host": "127.0.0.1",
+    "database": "fantasy_worlds",
+    "user": "postgres",
+    "password": "password"
   }
+}
