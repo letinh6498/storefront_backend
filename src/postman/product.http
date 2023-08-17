@@ -1,4 +1,4 @@
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4NTI2OTU3NCwiZXhwIjoxNjg1MjcwNDc0fQ.HDe46QnoithA8hEcrwsHZZ48aCIqUj9DAOUc01_upsY
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4Njk5MTcxMSwiZXhwIjoxNjg2OTkyNjExfQ.FsxhEkt_syzvvdvcF-hrayAys8fo1POKDfoUbX4w2KQ
 @url=http://localhost:3000
 ###
 ### Get All Products
@@ -12,7 +12,7 @@ Authorization: Bearer {{token}}
 ### Get Product by ID
 ###
 
-GET {{url}}/products/1
+GET {{url}}/products/2
 Authorization: Bearer {{token}}
 
 
@@ -22,11 +22,11 @@ Authorization: Bearer {{token}}
 
 POST {{url}}/products
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4Njk5MTcxMSwiZXhwIjoxNjg2OTkyNjExfQ.FsxhEkt_syzvvdvcF-hrayAys8fo1POKDfoUbX4w2KQ
 
 {
-  "name": "Product 2",
-  "description": "cái gì gì đây 1",
+  "name": "Product 3",
+  "description": "cái gì gì đây 3",
   "price": 1099
 }
 

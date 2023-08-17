@@ -40,7 +40,7 @@ To run the project, run the following commands:
 
 nodemon
 ## docker compose file
-create file docker compose.yml file and copy content to file
+create file docker-compose.yml file and copy content to file
 version: '3.8'
 
 services:

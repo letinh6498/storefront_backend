@@ -1,5 +1,2 @@
 node_modules/
 build/
-.env
-database.json
-docker-compose.yml

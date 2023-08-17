@@ -1,4 +1,4 @@
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4NTI2OTU3NCwiZXhwIjoxNjg1MjcwNDc0fQ.HDe46QnoithA8hEcrwsHZZ48aCIqUj9DAOUc01_upsY
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4Njk5MjgyMiwiZXhwIjoxNjg2OTkzNzIyfQ.OxYVwDYhMNH19R37e1KPgHFiLXnyLEXDuh0CxM1jnm8
 
 @url=http://localhost:3000
 ###
@@ -39,10 +39,10 @@ Content-Type: application/json
 
 PUT {{url}}/users/1
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY4Njk5MTYyMiwiZXhwIjoxNjg2OTkyNTIyfQ.E2a3qjR-eT4pULUIUYz1TT4XLriYtjckZtGLZZrsVQA
 
 {
-  "username": "user1",
+  "username": "user2",
   "email": "abc1@gmail.com",
   "password": "1234",
   "first_name": "Tinh",
@@ -79,8 +79,8 @@ POST {{url}}/login
 Content-Type: application/json
 
 {
-  "username": "user1",
-  "password": "123"
+  "username": "user2",
+  "password": "1234"
 }
 
 

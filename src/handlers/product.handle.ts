@@ -69,7 +69,7 @@ const updateProduct = async (req: Request, res: Response) => {
 };
 
 const product_routes = (app: express.Application) => {
-  app.get('/products', verifyAuthToken, getAllProducts);
+  app.get('/products', getAllProducts);
   app.post('/products', verifyAuthToken, createProduct);
   app.get('/products/:id', verifyAuthToken, getProductById);
   app.put('/products/:id', verifyAuthToken, updateProduct);
